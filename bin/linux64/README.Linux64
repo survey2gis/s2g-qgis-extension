@@ -1,0 +1,15 @@
+README for survey2gis, Linux release
+Last updated: 2018-05-06
+---
+
+This folder contains the "survey2gis" executable for GN/Linux systems.
+It has been compiled on a 64 bit Version of Ubuntu 14.04 LTS (kernel 3.13,
+glibc 2.19, 64 bit).
+
+The GUI version can be started by launching the "survey2gis" program
+in this folder. You need to have GTK+ (Version 2) installed.
+Most Linux distributions should include GTK2 by default. If not,
+consult your distribution's package manager documentation on how to install it.
+
+As a light-weight alternative, the folder "cli-only" contains a Linux
+binary without GUI components that you can run from the command line.

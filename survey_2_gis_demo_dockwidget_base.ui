@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Survey2GisDemoDockWidgetBase</class>
+ <widget class="QDockWidget" name="Survey2GisDemoDockWidgetBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>446</width>
+    <height>849</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Survey2Gis Demo</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_34">
+    <item>
+     <widget class="QGroupBox" name="outputDirectoryGroup">
+      <property name="title">
+       <string>Output Directory for shapefiles</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0" colspan="2">
+        <widget class="QLineEdit" name="outputDirectory">
+         <property name="palette">
+          <palette>
+           <active>
+            <colorrole role="Base">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>235</red>
+               <green>235</green>
+               <blue>235</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="Base">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>235</red>
+               <green>235</green>
+               <blue>235</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled/>
+          </palette>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="output_folder_reset">
+         <property name="text">
+          <string>Reset</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="output_folder_select">
+         <property name="text">
+          <string>Select Folder</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="FilesGroup" native="true">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="4" column="0">
+        <widget class="QGroupBox" name="ParserGroup">
+         <property name="title">
+          <string>Parser File</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="6" column="1">
+           <widget class="QPushButton" name="parser_select_button">
+            <property name="text">
+             <string>Select file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QPushButton" name="parser_reset">
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QLineEdit" name="parser_select">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>235</red>
+                  <green>235</green>
+                  <blue>235</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>235</red>
+                  <green>235</green>
+                  <blue>235</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled/>
+             </palette>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="OutputNameGroup">
+         <property name="title">
+          <string>Output name of generated Layer(s)</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLineEdit" name="output_base_input">
+            <property name="placeholderText">
+             <string>Insert a name for generated Shapefiles</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="InputFileGroup">
+         <property name="title">
+          <string>Input file(s)</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0" colspan="2">
+           <widget class="QLineEdit" name="input_select">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>235</red>
+                  <green>235</green>
+                  <blue>235</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>235</red>
+                  <green>235</green>
+                  <blue>235</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled/>
+             </palette>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="input_data_reset">
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="input_select_button">
+            <property name="text">
+             <string>Select File(s)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="OptionsGroup">
+      <property name="title">
+       <string>Options</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QScrollArea" name="scrollArea_2">
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>375</width>
+            <height>2222</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_35">
+           <item>
+            <widget class="QWidget" name="options_lmp_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_36">
+              <item>
+               <widget class="QLabel" name="label_mode_2">
+                <property name="text">
+                 <string>--label-mode-poly</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="label_mode_first">
+                <property name="text">
+                 <string>first</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="label_mode_last">
+                <property name="text">
+                 <string>last</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="label_mode_center">
+                <property name="text">
+                 <string>center</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_orientation_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QLabel" name="orientation_label_2">
+                <property name="text">
+                 <string>-O --orientation</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="orientation_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_dz_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_37">
+              <item>
+               <widget class="QLabel" name="proj_dz_label_2">
+                <property name="text">
+                 <string>--proj-dz</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_dz_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_label_field_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QLabel" name="label_field_label_2">
+                <property name="text">
+                 <string>-L label</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="label_field_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_rx_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_38">
+              <item>
+               <widget class="QLabel" name="proj_rx_label_2">
+                <property name="text">
+                 <string>--proj-rx</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_rx_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_selection_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_39">
+              <item>
+               <widget class="QLabel" name="selection_label_2">
+                <property name="text">
+                 <string>-S --selection</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="selection_input_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>900</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_topology_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_40">
+              <item>
+               <widget class="QLabel" name="topology_label_2">
+                <property name="text">
+                 <string>-T --topology</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="topology_input_2">
+                <item>
+                 <property name="text">
+                  <string>none</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>basic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>full</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_ry_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_41">
+              <item>
+               <widget class="QLabel" name="proj_ry_label_2">
+                <property name="text">
+                 <string>--proj-ry</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_ry_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_z_offset_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_42">
+              <item>
+               <widget class="QLabel" name="z_offset_label_2">
+                <property name="text">
+                 <string>-z --z-offset</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="z_offset_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_rz" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="QLabel" name="proj_rz_label">
+                <property name="text">
+                 <string>--proj-rz</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_rz_input"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_log_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_43">
+              <item>
+               <widget class="QLabel" name="log_label_2">
+                <property name="text">
+                 <string>-l --log</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="log_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_tolerance_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_44">
+              <item>
+               <widget class="QLabel" name="tolerance_label_2">
+                <property name="text">
+                 <string>-t --tolerance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="tolerance_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_decimal_places_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_45">
+              <item>
+               <widget class="QLabel" name="decimal_places_label_2">
+                <property name="text">
+                 <string>-d --decimal-places</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="decimal_places_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_snapping_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_46">
+              <item>
+               <widget class="QLabel" name="snapping_label_2">
+                <property name="text">
+                 <string>-s --snapping</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="snapping_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_decimal_point_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_47">
+              <item>
+               <widget class="QLabel" name="decimal_point_label_2">
+                <property name="text">
+                 <string>-i --decimal-point</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="decimal_point_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_decimal_group_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_48">
+              <item>
+               <widget class="QLabel" name="decimal_group_label_2">
+                <property name="text">
+                 <string>-g --decimal-group</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="decimal_group_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_dangling_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_49">
+              <item>
+               <widget class="QLabel" name="dangling_label_2">
+                <property name="text">
+                 <string>-D --dangling</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="dangling_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_ds_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_50">
+              <item>
+               <widget class="QLabel" name="proj_ds_label_2">
+                <property name="text">
+                 <string>--proj-ds</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_ds_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_x_offset_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_51">
+              <item>
+               <widget class="QLabel" name="x_offset_label_2">
+                <property name="text">
+                 <string>-x --x-offset</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="x_offset_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_english_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_52">
+              <item>
+               <widget class="QLabel" name="english_label_2">
+                <property name="text">
+                 <string>-e --english</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="english_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_y_offset_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_53">
+              <item>
+               <widget class="QLabel" name="y_offset_label_2">
+                <property name="text">
+                 <string>-y --y-offset</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="y_offset_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_strict_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_54">
+              <item>
+               <widget class="QLabel" name="strict_label_2">
+                <property name="text">
+                 <string>-c --strict</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="strict_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_in_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_55">
+              <item>
+               <widget class="QLabel" name="proj_in_label_2">
+                <property name="text">
+                 <string>--proj-in</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_in_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_force_2d_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_56">
+              <item>
+               <widget class="QLabel" name="force_2d_label_2">
+                <property name="text">
+                 <string>-2 --force-2d</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="force_2d_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_out_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_57">
+              <item>
+               <widget class="QLabel" name="proj_out_label_2">
+                <property name="text">
+                 <string>--proj-out</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_out_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_dx_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_58">
+              <item>
+               <widget class="QLabel" name="proj_dx_label_2">
+                <property name="text">
+                 <string>--proj-dx</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_dx_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_validate_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_59">
+              <item>
+               <widget class="QLabel" name="validate_label_2">
+                <property name="text">
+                 <string>-v --validate</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="validate_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="options_proj_dy_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_60">
+              <item>
+               <widget class="QLabel" name="proj_dy_label_2">
+                <property name="text">
+                 <string>--proj-dy</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proj_dy_input_2"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="loggingGroup">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Logs</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QTextEdit" name="output_log">
+         <property name="palette">
+          <palette>
+           <active>
+            <colorrole role="Base">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>235</red>
+               <green>235</green>
+               <blue>235</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="Base">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>235</red>
+               <green>235</green>
+               <blue>235</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled/>
+          </palette>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="process_button">
+      <property name="text">
+       <string>Process files</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
