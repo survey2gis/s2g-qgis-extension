@@ -1,9 +1,11 @@
 import os
 import platform
+import re
 import logging
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
-from qgis.core import QgsProject, QgsVectorLayer, Qgis, QgsMessageLog
+from qgis.core import QgsProject, QgsVectorLayer, Qgis
 from qgis.utils import iface
+
 from dataclasses import dataclass, field
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -23,28 +25,6 @@ class CommandOptions:
     additional_options: dict = field(default_factory=dict)
     flag_options: dict = field(default_factory=dict)
 
-    def to_command_list(self) -> list:
-        command = []
-
-        if self.parser_path:
-            command.extend(["-p", self.parser_path])
-        if self.label_mode:
-            command.append(f"--label-mode-line={self.label_mode}")
-        if self.output_directory:
-            command.extend(["-o", self.output_directory])
-        if self.output_base_name:
-            command.extend(["-n", self.output_base_name])
-
-        for key, value in self.additional_options.items():
-            if value:
-                command.append(f"{key}={value}")
-
-        for flag, is_set in self.flag_options.items():
-            if is_set:
-                command.append(flag)
-
-        return command
-
 
 class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     closingPlugin = QtCore.pyqtSignal()
@@ -54,16 +34,19 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         super(Survey2GisDemoDockWidget, self).__init__(parent)
         self.setupUi(self)
 
-        self.ensure_binary_executable()
+        # Ensure the Linux binary is executable
+        self.ensure_linux_binary_executable()
 
+        # Initialize output base name and Directory
         self.output_base_name = None
         self.output_directory = None
 
+        # Connect select buttons to their slots
         self.input_select_button.clicked.connect(self.select_input_files)
         self.parser_select_button.clicked.connect(self.select_parser_file)
         self.output_folder_select.clicked.connect(self.select_output_directory)
-        self.manual_link.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/user-attachments/files/16010974/english.pdf")))
 
+        # Connect reset buttons to their slots
         self.process_button.clicked.connect(self.process_files)
         self.input_data_reset.clicked.connect(
             lambda: self.reset_text_field(self.input_select)
@@ -75,90 +58,27 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             lambda: self.reset_text_field(self.output_folder_select)
         )
 
+        # Find the QComboBox
+        self.label_mode_poly = self.findChild(QtWidgets.QComboBox, 'label_mode_poly')
+
+
+
+        # Initialize command options
         self.command_options = CommandOptions()
-        
-        # Define field mapping for options
-        self.option_fields = {
-            'parser_path': self.parser_select,
-            'output_base_name': self.output_basename_input,
-            'output_directory': self.output_directory_input
-        }
-        
-        # Define additional options and flags if needed
-        self.additional_options_fields = {
-            '--topology': self.topology_select,
-            '--label-mode-poly': self.label_mode_poly_select,
-            '--label': self.label_input,
-            '--selection': self.selection_input,
-            '--z-offset': self.z_offset_input,
-            '--tolerance': self.tolerance_input,
-            '--decimal-places': self.decimal_places_input,
-            '--snapping': self.snapping_input,
-            '--decimal-point': self.decimal_point_input,
-            '--decimal-group': self.decimal_group_input,
-            '--dangling': self.dangling_input,
-            '--x-offset': self.x_offset_input,
-            '--y-offset': self.y_offset_input
-        }
-
-        self.flag_options_fields = {
-            '-c': self.strict_checkbox,
-            '-e': self.english_checkbox,
-            '-v': self.validate_checkbox,
-            '-2': self.force_2d_checkbox,
-        }
-
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
 
-    def ensure_binary_executable(self):
-        """Ensure the binary has executable permissions."""
-        system = platform.system().lower()
-        binary_path = self.get_binary_path()
-
-        if os.path.exists(binary_path):
-            if system == "linux" or system == "darwin":
+    def ensure_linux_binary_executable(self):
+        """Ensure the Linux binary has executable permissions."""
+        if platform.system().lower() == "linux":
+            binary_path = os.path.join(
+                os.path.dirname(__file__), "bin", "linux64", "cli-only", "survey2gis"
+            )
+            if os.path.exists(binary_path):
                 st = os.stat(binary_path)
-                if not (st.st_mode & 0o111):
-                    os.chmod(binary_path, st.st_mode | 0o111)
-                    logger.info(f"Set executable permissions for {binary_path}")
-                    self.log_plugin_message(f"Set executable permissions for {binary_path}")
-                else:
-                    logger.info(f"{binary_path} is already executable")
-                    self.log_plugin_message(f"{binary_path} is already executable")
-            elif system == "windows":
-                # On Windows, do nothing as it doesn't use chmod for executable permissions
-                pass
-            else:
-                logger.warning(f"Unsupported operating system: {system}")
-                self.log_plugin_message(f"Unsupported operating system: {system}")
-        else:
-            logger.warning(f"Binary {binary_path} not found")
-            self.log_plugin_message(f"Binary {binary_path} not found")
-
-    def log_plugin_message(self, message):
-        """Log a message to the plugin-specific log tab."""
-        QgsMessageLog.logMessage(message, "Survey2GIS", Qgis.Info)
-
-    def get_binary_path(self):
-        """Return the path to the appropriate binary based on the current platform."""
-        system = platform.system().lower()
-        if system == "windows":
-            return os.path.join(
-                os.path.dirname(__file__), "survey2gis", "win32", "cli-only", "survey2gis.exe"
-            )
-        elif system == "linux":
-            return os.path.join(
-                os.path.dirname(__file__), "survey2gis", "linux64", "cli-only", "survey2gis"
-            )
-        elif system == "darwin":
-            return os.path.join(
-                os.path.dirname(__file__), "survey2gis", "macosx", "cli-only", "survey2gis"
-            )
-        else:
-            raise NotImplementedError("Your operating system is not supported.")
+                os.chmod(binary_path, st.st_mode | 0o111)
 
     def select_input_files(self):
         """Open file dialog to select multiple input files."""
@@ -182,15 +102,14 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self, "Select Output Directory", ""
         )
         if directory:
-            self.output_directory_input.setText(directory)  # Update text field with directory path
-            self.command_options.output_directory = directory  # Update command options
-
+            self.outputDirectory.setText(directory)
+            self.output_directory = directory
 
     def reset_text_field(self, field):
         field.setText("")
 
     def get_selected_label_mode_poly(self):
-        """Get the selected label mode from the QComboBox."""
+        """Get the selected label mode from the radio button group."""
         return self.label_mode_poly.currentText()
 
     def show_message(self, message, level=Qgis.Info):
@@ -201,22 +120,35 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def process_files(self):
         """Process the files using the survey2gis command line tool."""
         try:
-            # Check if any of the required fields are empty
-            if (not self.input_select.text().strip() or
-                not self.parser_select.text().strip() or
-                not self.output_basename_input.text().strip() or
-                not self.output_directory_input.text().strip()):
-                self.show_error_message("Please fill all fields in Tab 'files'")
-                return
-
-            self.command_options = self.read_options()
+            # Get the user inputs
+            self.command_options.parser_path = self.parser_select.text()
             input_files = self.input_select.text().split("; ")
+            self.command_options.output_base_name = self.output_base_input.text()
+            self.command_options.label_mode = self.get_selected_label_mode_poly()
+            self.command_options.output_directory = self.output_directory
 
+            # # Example: Add dynamic options based on checkboxes
+            # if self.some_checkbox.isChecked():
+            #     self.command_options.additional_options['--some-option'] = 'value'
+
+            # # Example: Add flag options based on checkboxes
+            # if self.some_flag_checkbox.isChecked():
+            #     self.command_options.flag_options['-e'] = True
+
+            selected_poly_mode = self.get_selected_label_mode_poly()
+            self.command_options.additional_options['--poly-mode'] = selected_poly_mode
+
+
+            # Build the command
             command = self.build_command(input_files)
 
+            # Clear the log and show command
             self.output_log.clear()
             self.output_log.append(" ".join(command))
 
+            return
+
+            # Run the command using QProcess
             self.run_process(command)
 
         except FileNotFoundError as e:
@@ -226,40 +158,48 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         except Exception as e:
             self.handle_error(f"An unexpected error occurred: {e}")
 
-
-    def read_options(self):
-        """Read options from UI fields and update command_options."""
-        command_options = CommandOptions()
-
-        # Read main options
-        for option, widget in self.option_fields.items():
-            value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
-            setattr(command_options, option, value)
-
-        # Read additional options
-        for key, widget in self.additional_options_fields.items():
-            value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
-            command_options.additional_options[key] = value
-
-        # Read flag options
-        for flag, widget in self.flag_options_fields.items():
-            is_set = widget.isChecked()
-            command_options.flag_options[flag] = is_set
-
-        return command_options
-
     def build_command(self, input_files):
         """Build the command to execute survey2gis."""
-        binary_path = self.get_binary_path()
+        system = platform.system().lower()
+        if system == "windows":
+            binary_path = os.path.join(
+                os.path.dirname(__file__), "survey2gis", "win32", "cli-only", "survey2gis.exe"
+            )
+        elif system == "linux":
+            binary_path = os.path.join(
+                os.path.dirname(__file__), "survey2gis", "linux64", "cli-only", "survey2gis"
+            )
+        elif system == "darwin":
+            binary_path = os.path.join(
+                os.path.dirname(__file__), "survey2gis", "macosx", "cli-only", "survey2gis"
+            )
+        else:
+            raise NotImplementedError("Your operating system is not supported.")
 
         command = [binary_path]
 
-        # Include options and flags with the equal sign for options
-        command.extend(self.command_options.to_command_list())
+        # Add options from the command options dataclass to the command
+        if self.command_options.parser_path:
+            command.extend(["-p", self.command_options.parser_path])
+        if self.command_options.label_mode:
+            command.extend(["--label-mode-line", self.command_options.label_mode])
+        if self.command_options.output_directory:
+            command.extend(["-o", self.command_options.output_directory])
+        if self.command_options.output_base_name:
+            command.extend(["-n", self.command_options.output_base_name])
+
+        # Add additional options dynamically
+        for option, value in self.command_options.additional_options.items():
+            command.extend([option, value])
+
+        # Add flag options dynamically
+        for flag, enabled in self.command_options.flag_options.items():
+            if enabled:
+                command.append(flag)
 
         # Add input files to the command
         command.extend(input_files)
-
+        
         return command
 
     def run_process(self, command):
@@ -298,10 +238,13 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             )
             return
 
+        self.output_log.append("success pattern")
+
         self.load_shapefiles(output_log)
 
     def load_shapefiles(self, output_log):
         """Load produced shapefiles into QGIS."""
+
         shapefile_suffixes = ["_line.shp", "_point.shp", "_poly.shp"]
         shapefiles = [
             os.path.join(
@@ -316,7 +259,7 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             return
 
         root = QgsProject.instance().layerTreeRoot()
-        group = root.addGroup(self.command_options.output_base_name)
+        group = root.addGroup(self.output_base_name)
 
         for shapefile in shapefiles:
             if os.path.exists(shapefile):
@@ -324,7 +267,9 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 layer = QgsVectorLayer(shapefile, layer_name, "ogr")
 
                 if layer and layer.isValid():
+                    # Add the layer to the project
                     QgsProject.instance().addMapLayer(layer, False)
+                    # Add the layer to the group in the layer tree
                     group.addLayer(layer)
                     logger.info(f"Added {os.path.basename(shapefile)} to project")
                 else:
@@ -334,6 +279,7 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             else:
                 logger.warning(f"Shapefile not found: {shapefile}")
 
+        # Expand the group to show the layers
         group.setExpanded(True)
 
     def handle_error(self, error):
@@ -353,4 +299,3 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
 def classFactory(iface):
     return Survey2GisDemoDockWidget(iface)
-

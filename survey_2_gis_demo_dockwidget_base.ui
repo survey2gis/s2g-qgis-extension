@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>849</height>
+    <width>579</width>
+    <height>1223</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,63 +28,6 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_34">
     <item>
-     <widget class="QGroupBox" name="outputDirectoryGroup">
-      <property name="title">
-       <string>Output Directory for shapefiles</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0" colspan="2">
-        <widget class="QLineEdit" name="outputDirectory">
-         <property name="palette">
-          <palette>
-           <active>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>235</red>
-               <green>235</green>
-               <blue>235</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>235</red>
-               <green>235</green>
-               <blue>235</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled/>
-          </palette>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="output_folder_reset">
-         <property name="text">
-          <string>Reset</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="output_folder_select">
-         <property name="text">
-          <string>Select Folder</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
      <widget class="QWidget" name="FilesGroup" native="true">
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -99,728 +42,1205 @@
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item row="4" column="0">
-        <widget class="QGroupBox" name="ParserGroup">
-         <property name="title">
-          <string>Parser File</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="6" column="1">
-           <widget class="QPushButton" name="parser_select_button">
-            <property name="text">
-             <string>Select file</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QPushButton" name="parser_reset">
-            <property name="text">
-             <string>Reset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QLineEdit" name="parser_select">
-            <property name="palette">
-             <palette>
-              <active>
-               <colorrole role="Base">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>235</red>
-                  <green>235</green>
-                  <blue>235</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </active>
-              <inactive>
-               <colorrole role="Base">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>235</red>
-                  <green>235</green>
-                  <blue>235</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </inactive>
-              <disabled/>
-             </palette>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="OutputNameGroup">
-         <property name="title">
-          <string>Output name of generated Layer(s)</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLineEdit" name="output_base_input">
-            <property name="placeholderText">
-             <string>Insert a name for generated Shapefiles</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QGroupBox" name="InputFileGroup">
-         <property name="title">
-          <string>Input file(s)</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLineEdit" name="input_select">
-            <property name="palette">
-             <palette>
-              <active>
-               <colorrole role="Base">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>235</red>
-                  <green>235</green>
-                  <blue>235</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </active>
-              <inactive>
-               <colorrole role="Base">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>235</red>
-                  <green>235</green>
-                  <blue>235</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </inactive>
-              <disabled/>
-             </palette>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="input_data_reset">
-            <property name="text">
-             <string>Reset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="input_select_button">
-            <property name="text">
-             <string>Select File(s)</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="OptionsGroup">
-      <property name="title">
-       <string>Options</string>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QScrollArea" name="scrollArea_2">
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustIgnored</enum>
-         </property>
-         <property name="widgetResizable">
-          <bool>true</bool>
-         </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_2">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>375</width>
-            <height>2222</height>
-           </rect>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="FilesTab">
+       <attribute name="title">
+        <string>Files</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_35">
-           <item>
-            <widget class="QWidget" name="options_lmp_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_36">
-              <item>
-               <widget class="QLabel" name="label_mode_2">
-                <property name="text">
-                 <string>--label-mode-poly</string>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0" colspan="2">
+            <widget class="QGroupBox" name="InputFileGroup">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>1. Data input file(s)</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_5">
+              <property name="bottomMargin">
+               <number>20</number>
+              </property>
+              <item row="0" column="0" colspan="2">
+               <widget class="QLineEdit" name="input_select">
+                <property name="palette">
+                 <palette>
+                  <active>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>235</red>
+                      <green>235</green>
+                      <blue>235</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </active>
+                  <inactive>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>235</red>
+                      <green>235</green>
+                      <blue>235</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </inactive>
+                  <disabled/>
+                 </palette>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="label_mode_first">
-                <property name="text">
-                 <string>first</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="label_mode_last">
-                <property name="text">
-                 <string>last</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="label_mode_center">
-                <property name="text">
-                 <string>center</string>
-                </property>
-                <property name="checked">
+                <property name="readOnly">
                  <bool>true</bool>
                 </property>
                </widget>
               </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="input_select_button">
+                <property name="text">
+                 <string>Select data file(s)</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="input_data_reset">
+                <property name="text">
+                 <string>Reset selection</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
-           <item>
-            <widget class="QWidget" name="options_orientation_2" native="true">
+           <item row="1" column="0" colspan="2">
+            <widget class="QGroupBox" name="ParserGroup">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>2. Parser File</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout">
+              <property name="bottomMargin">
+               <number>20</number>
+              </property>
+              <item row="6" column="1">
+               <widget class="QPushButton" name="parser_select_button">
+                <property name="text">
+                 <string>Select parser file</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0" colspan="2">
+               <widget class="QLineEdit" name="parser_select">
+                <property name="palette">
+                 <palette>
+                  <active>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>235</red>
+                      <green>235</green>
+                      <blue>235</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </active>
+                  <inactive>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>235</red>
+                      <green>235</green>
+                      <blue>235</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </inactive>
+                  <disabled/>
+                 </palette>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QPushButton" name="parser_reset">
+                <property name="text">
+                 <string>Reset selection</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QGroupBox" name="OutputNameGroup">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>3. Output name of generated Layer(s)</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <property name="bottomMargin">
+               <number>20</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLineEdit" name="output_basename_input">
+                <property name="placeholderText">
+                 <string>Insert a name for generated Shapefiles</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QGroupBox" name="outputDirectoryGroup">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>4. Output Directory for shapefiles</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_4">
+              <item row="0" column="0" colspan="2">
+               <widget class="QLineEdit" name="output_directory_input">
+                <property name="palette">
+                 <palette>
+                  <active>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>235</red>
+                      <green>235</green>
+                      <blue>235</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </active>
+                  <inactive>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>235</red>
+                      <green>235</green>
+                      <blue>235</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </inactive>
+                  <disabled/>
+                 </palette>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QPushButton" name="output_folder_select">
+                <property name="text">
+                 <string>Select ouput directory</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="output_folder_reset">
+                <property name="text">
+                 <string>Reset selection</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="5" column="0" colspan="2">
+            <widget class="QPushButton" name="process_button">
+             <property name="palette">
+              <palette>
+               <active>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>212</red>
+                   <green>251</green>
+                   <blue>121</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </active>
+               <inactive>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>212</red>
+                   <green>251</green>
+                   <blue>121</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </inactive>
+               <disabled>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>212</red>
+                   <green>251</green>
+                   <blue>121</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </disabled>
+              </palette>
+             </property>
+             <property name="text">
+              <string>Process files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="OptionsTab">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <attribute name="title">
+        <string>Options</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QFrame" name="frame_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <property name="leftMargin">
+            <number>6</number>
+           </property>
+           <property name="topMargin">
+            <number>6</number>
+           </property>
+           <property name="rightMargin">
+            <number>6</number>
+           </property>
+           <property name="bottomMargin">
+            <number>6</number>
+           </property>
+           <item row="0" column="1">
+            <widget class="QWidget" name="widget_3" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <property name="leftMargin">
+               <number>6</number>
+              </property>
+              <property name="topMargin">
+               <number>6</number>
+              </property>
+              <property name="rightMargin">
+               <number>6</number>
+              </property>
+              <property name="bottomMargin">
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QWidget" name="widget_5" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QCheckBox" name="strict_checkbox">
+                   <property name="text">
+                    <string>-c, --strict</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="english_checkbox">
+                   <property name="text">
+                    <string>-e, --english</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="options_lmp" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_mode">
+                   <property name="text">
+                    <string>--label-mode-poly</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="label_mode_poly_select">
+                   <item>
+                    <property name="text">
+                     <string>center</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>first</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>last</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="options_label_field" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_3">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>-L, --label</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="label_input">
+                   <property name="placeholderText">
+                    <string>-L, --label (see manual for details)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="options_z_offset" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_42">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>-z, --z-offset </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="z_offset_input">
+                   <property name="text">
+                    <string>0,0</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-z, --z-offset (default: 0,0)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="options_y_offset" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_53">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_12">
+                   <property name="text">
+                    <string>-y, --y-offset</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="y_offset_input">
+                   <property name="text">
+                    <string>0,0</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-y, --y-offset (default: 0,0)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="options_decimal_group" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_48">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>decimal group input</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="decimal_group_input">
+                   <property name="text">
+                    <string>,</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-g, --decimal-group (default: auto)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="options_decimal_point" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_47">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_8">
+                   <property name="text">
+                    <string>decimal point input</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="decimal_point_input">
+                   <property name="text">
+                    <string>.</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-i, --decimal-point (default: auto)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="options_snapping" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_46">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_7">
+                   <property name="text">
+                    <string>-s, --snapping</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="snapping_input">
+                   <property name="text">
+                    <string>0,0</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-s, --snapping (default: 0,0 = off)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QWidget" name="widget_2" native="true">
              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="leftMargin">
+               <number>6</number>
+              </property>
+              <property name="topMargin">
+               <number>6</number>
+              </property>
+              <property name="rightMargin">
+               <number>6</number>
+              </property>
+              <property name="bottomMargin">
+               <number>6</number>
+              </property>
               <item>
-               <widget class="QLabel" name="orientation_label_2">
-                <property name="text">
-                 <string>-O --orientation</string>
-                </property>
+               <widget class="QWidget" name="checkGroup_1" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QCheckBox" name="validate_checkbox">
+                   <property name="text">
+                    <string>-v, --validate</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="force_2d_checkbox">
+                   <property name="text">
+                    <string>-2, --force-2d</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="orientation_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_dz_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_37">
-              <item>
-               <widget class="QLabel" name="proj_dz_label_2">
-                <property name="text">
-                 <string>--proj-dz</string>
-                </property>
+               <widget class="QWidget" name="options_topology" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_7">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="topology_label">
+                   <property name="text">
+                    <string>-T --topology</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="topology_select">
+                   <item>
+                    <property name="text">
+                     <string>full</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>none</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>basic</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="proj_dz_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_label_field_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <widget class="QLabel" name="label_field_label_2">
-                <property name="text">
-                 <string>-L label</string>
-                </property>
+               <widget class="QWidget" name="widget" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string>-O, --orientation</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="orientation_input">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-O, --orientation (see manual for details)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="label_field_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_rx_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_38">
-              <item>
-               <widget class="QLabel" name="proj_rx_label_2">
-                <property name="text">
-                 <string>--proj-rx</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="proj_rx_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_selection_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_39">
-              <item>
-               <widget class="QLabel" name="selection_label_2">
-                <property name="text">
-                 <string>-S --selection</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="selection_input_2">
+               <widget class="QWidget" name="options_selection" native="true">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>900</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_topology_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_40">
-              <item>
-               <widget class="QLabel" name="topology_label_2">
-                <property name="text">
-                 <string>-T --topology</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="topology_input_2">
-                <item>
-                 <property name="text">
-                  <string>none</string>
+                <layout class="QGridLayout" name="gridLayout_8">
+                 <property name="leftMargin">
+                  <number>0</number>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>basic</string>
+                 <property name="topMargin">
+                  <number>0</number>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>full</string>
+                 <property name="rightMargin">
+                  <number>0</number>
                  </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_ry_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_41">
-              <item>
-               <widget class="QLabel" name="proj_ry_label_2">
-                <property name="text">
-                 <string>--proj-ry</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="proj_ry_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_z_offset_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_42">
-              <item>
-               <widget class="QLabel" name="z_offset_label_2">
-                <property name="text">
-                 <string>-z --z-offset</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="z_offset_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_rz" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <widget class="QLabel" name="proj_rz_label">
-                <property name="text">
-                 <string>--proj-rz</string>
-                </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item row="1" column="0">
+                  <widget class="QLineEdit" name="selection_input">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>900</height>
+                    </size>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-S, --selection (see manual for details)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>-S, --selection </string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="proj_rz_input"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_log_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_43">
-              <item>
-               <widget class="QLabel" name="log_label_2">
-                <property name="text">
-                 <string>-l --log</string>
-                </property>
+               <widget class="QWidget" name="options_tolerance" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_44">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="text">
+                    <string>-t, --tolerance</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="tolerance_input">
+                   <property name="text">
+                    <string>0,0</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-t, --tolerance (default: 0,0)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="log_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_tolerance_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_44">
-              <item>
-               <widget class="QLabel" name="tolerance_label_2">
-                <property name="text">
-                 <string>-t --tolerance</string>
-                </property>
+               <widget class="QWidget" name="options_decimal_places" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_45">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>-d, --decimal-places</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="decimal_places_input">
+                   <property name="text">
+                    <string>3</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-d, --decimal-places</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="tolerance_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_decimal_places_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_45">
-              <item>
-               <widget class="QLabel" name="decimal_places_label_2">
-                <property name="text">
-                 <string>-d --decimal-places</string>
-                </property>
+               <widget class="QWidget" name="options_dangling" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_49">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_10">
+                   <property name="text">
+                    <string>-D, --dangling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="dangling_input">
+                   <property name="text">
+                    <string>0,0</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-D, --dangling (default: 0,0 = off)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="decimal_places_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_snapping_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_46">
-              <item>
-               <widget class="QLabel" name="snapping_label_2">
-                <property name="text">
-                 <string>-s --snapping</string>
-                </property>
+               <widget class="QWidget" name="options_x_offset" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_51">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_11">
+                   <property name="text">
+                    <string>-x, --x-offset</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="x_offset_input">
+                   <property name="text">
+                    <string>0,0</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>-x, --x-offset (default: 0,0)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="snapping_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_decimal_point_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_47">
-              <item>
-               <widget class="QLabel" name="decimal_point_label_2">
-                <property name="text">
-                 <string>-i --decimal-point</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="decimal_point_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_decimal_group_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_48">
-              <item>
-               <widget class="QLabel" name="decimal_group_label_2">
-                <property name="text">
-                 <string>-g --decimal-group</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="decimal_group_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_dangling_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_49">
-              <item>
-               <widget class="QLabel" name="dangling_label_2">
-                <property name="text">
-                 <string>-D --dangling</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="dangling_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_ds_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_50">
-              <item>
-               <widget class="QLabel" name="proj_ds_label_2">
-                <property name="text">
-                 <string>--proj-ds</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="proj_ds_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_x_offset_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_51">
-              <item>
-               <widget class="QLabel" name="x_offset_label_2">
-                <property name="text">
-                 <string>-x --x-offset</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="x_offset_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_english_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_52">
-              <item>
-               <widget class="QLabel" name="english_label_2">
-                <property name="text">
-                 <string>-e --english</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="english_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_y_offset_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_53">
-              <item>
-               <widget class="QLabel" name="y_offset_label_2">
-                <property name="text">
-                 <string>-y --y-offset</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="y_offset_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_strict_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_54">
-              <item>
-               <widget class="QLabel" name="strict_label_2">
-                <property name="text">
-                 <string>-c --strict</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="strict_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_in_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_55">
-              <item>
-               <widget class="QLabel" name="proj_in_label_2">
-                <property name="text">
-                 <string>--proj-in</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="proj_in_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_force_2d_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_56">
-              <item>
-               <widget class="QLabel" name="force_2d_label_2">
-                <property name="text">
-                 <string>-2 --force-2d</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="force_2d_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_out_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_57">
-              <item>
-               <widget class="QLabel" name="proj_out_label_2">
-                <property name="text">
-                 <string>--proj-out</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="proj_out_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_dx_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_58">
-              <item>
-               <widget class="QLabel" name="proj_dx_label_2">
-                <property name="text">
-                 <string>--proj-dx</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="proj_dx_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_validate_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_59">
-              <item>
-               <widget class="QLabel" name="validate_label_2">
-                <property name="text">
-                 <string>-v --validate</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="validate_input_2"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="options_proj_dy_2" native="true">
-             <layout class="QVBoxLayout" name="verticalLayout_60">
-              <item>
-               <widget class="QLabel" name="proj_dy_label_2">
-                <property name="text">
-                 <string>--proj-dy</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="proj_dy_input_2"/>
               </item>
              </layout>
             </widget>
            </item>
           </layout>
          </widget>
-        </widget>
-       </item>
-      </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="LogsTab">
+       <attribute name="title">
+        <string>Logs</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QGroupBox" name="loggingGroup">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Logs</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QTextEdit" name="output_log">
+             <property name="palette">
+              <palette>
+               <active>
+                <colorrole role="Base">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>235</red>
+                   <green>235</green>
+                   <blue>235</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </active>
+               <inactive>
+                <colorrole role="Base">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>235</red>
+                   <green>235</green>
+                   <blue>235</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </inactive>
+               <disabled/>
+              </palette>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="helpTap">
+       <attribute name="title">
+        <string>Help</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
+        <item>
+         <widget class="QCommandLinkButton" name="manual_link">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>User Manual</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="textBrowser">
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;Possible OPTIONs are:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-p, --parser=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;		&lt;br /&gt;name of file with parsing schema (required)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-o, --output=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;		&lt;br /&gt;directory name for output file(s) (required)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-n, --name=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;		&lt;br /&gt;base name for output file(s) (required)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-L, --label=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;		&lt;br /&gt;choose field for labels (see manual for details)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;--label-mode-point=label &lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;mode for points (default: &amp;quot;center&amp;quot;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;--label-mode-line=label &lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;mode for lines (default: &amp;quot;center&amp;quot;)&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;--label-mode-poly=label &lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;mode for polygons (default: &amp;quot;center&amp;quot;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;center&amp;quot; (Place at center of geometry)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;first&amp;quot; (Place on first vertex)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;last&amp;quot; (Place on last vertex)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;none&amp;quot; (Do not label)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-O, --orientation=world&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;choose output orientation (default: &amp;quot;world&amp;quot;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;world&amp;quot; (World: original X/Y/(Z))&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;localxz&amp;quot; (Local: X-Z cross section)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-T, --topology=topological &lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;processing level (default: &amp;quot;full&amp;quot;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;none&amp;quot; (No topological operations)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;basic&amp;quot; (Essential topological operations)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&amp;quot;full&amp;quot; (Full topological cleaning)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-S, --selection=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;select data by field content (see manual for details)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-t, --tolerance=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;distance threshold for coordinates (default: 0,0)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-s, --snapping=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;snapping dist. for boundary nodes (default: 0,0 = off)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-D, --dangling=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;snapping dist. for line dangles (default: 0,0 = off)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-x, --x-offset=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;constant offset to add to x coordinates (default: 0,0)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-y, --y-offset=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;constant offset to add to y coordinates (default: 0,0)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-z, --z-offset=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;constant offset to add to z coordinates (default: 0,0)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-d, --decimal-places=&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;decimal places for numeric DBF attributes (default: 3)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-i, --decimal-point=	&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;decimal point character in input data (default: auto)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-g, --decimal-group=	&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;numeric group character in input data (default: auto)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-r, --raw-data&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;save raw vertex data as additional points output&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-2, --force-2d&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;force 2D output, even if input data is 3D&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-c, --strict&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;		&lt;br /&gt;use stricter input validation&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-v, --validate-parser&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;	&lt;br /&gt;validate parser schema and exit&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; font-weight:700; color:#000000;&quot;&gt;-e, --english&lt;/span&gt;&lt;span style=&quot; font-family:'Menlo'; color:#000000;&quot;&gt;		&lt;br /&gt;force English messages and numeric notation&lt;/span&gt; &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="loggingGroup">
+     <widget class="QScrollArea" name="scrollArea_2">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="title">
-       <string>Logs</string>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>600</height>
+       </size>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QTextEdit" name="output_log">
-         <property name="palette">
-          <palette>
-           <active>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>235</red>
-               <green>235</green>
-               <blue>235</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>235</red>
-               <green>235</green>
-               <blue>235</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled/>
-          </palette>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="process_button">
-      <property name="text">
-       <string>Process files</string>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustIgnored</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>555</width>
+         <height>600</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="formLayout_2"/>
+      </widget>
      </widget>
     </item>
    </layout>
