@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>579</width>
-    <height>1223</height>
+    <height>1251</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -488,6 +488,38 @@
                </widget>
               </item>
               <item>
+               <widget class="QWidget" name="proj_out_group" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_15">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="proj_out_label">
+                   <property name="text">
+                    <string>--proj-out</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="proj_out_input">
+                   <property name="placeholderText">
+                    <string>EPSG:3857</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
                <widget class="QWidget" name="options_lmp" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_8">
                  <property name="leftMargin">
@@ -782,6 +814,38 @@
                   <widget class="QCheckBox" name="force_2d_checkbox">
                    <property name="text">
                     <string>-2, --force-2d</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="proj_in_group" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_14">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>6</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_13">
+                   <property name="text">
+                    <string>--proj-in</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="proj_in_input">
+                   <property name="placeholderText">
+                    <string>EPSG:32632</string>
                    </property>
                   </widget>
                  </item>

@@ -35,6 +35,7 @@ class CommandOptions:
         if self.output_base_name:
             command.extend(["-n", self.output_base_name])
 
+
         for key, value in self.additional_options.items():
             if value:
                 command.append(f"{key}={value}")
@@ -98,7 +99,9 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             '--decimal-group': self.decimal_group_input,
             '--dangling': self.dangling_input,
             '--x-offset': self.x_offset_input,
-            '--y-offset': self.y_offset_input
+            '--y-offset': self.y_offset_input,
+            '--proj-in': self.proj_in_input,
+            '--proj-out': self.proj_out_input
         }
 
         self.flag_options_fields = {
