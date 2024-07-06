@@ -205,11 +205,17 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Process the files using the survey2gis command line tool."""
         try:
             # Check if any of the required fields are empty
+        # Check if the required fields are filled
             if (not self.input_select.text().strip() or
-                not self.parser_select.text().strip() or
                 not self.output_basename_input.text().strip() or
                 not self.output_directory_input.text().strip()):
-                self.show_error_message("Please fill all fields in Tab 'files'")
+                self.show_error_message("Please fill all required fields in Tab 'files'")
+                return
+
+            # Check if either parser_profiles_select or parser_select is filled
+            if (self.parser_profiles_select.currentText() == "Choose profile" and 
+                not self.parser_select.text().strip()):
+                self.show_error_message("Please select a parser profile or a parser file.")
                 return
 
             self.command_options = self.read_options()
@@ -248,6 +254,13 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         for flag, widget in self.flag_options_fields.items():
             is_set = widget.isChecked()
             command_options.flag_options[flag] = is_set
+
+        # Check the value of parser_profiles_select and set parser_path accordingly
+        profile_text = self.parser_profiles_select.currentText()
+        if profile_text != "Choose profile":
+            command_options.parser_path = os.path.join(os.path.dirname(__file__), 'parser_profiles', profile_text)
+        else:
+            command_options.parser_path = self.parser_select.text()
 
         return command_options
 

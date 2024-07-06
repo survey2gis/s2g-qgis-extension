@@ -1,0 +1,199 @@
+#
+# Parser for AGAG format survey files Simple Point Protokoll
+#
+
+[Parser]
+name = 4_Positon_Code_End_Parser "Finds"
+tagging_mode = none
+# tag_field = objekt
+# key_field = nummer
+# "key_unique=Yes" not strictly required but good for data integrity
+# key_unique = no
+# tag_strict = yes
+no_data = -1
+coor_x = COORX
+coor_y = COORY
+coor_z = COORZ
+comment_mark = #
+
+# Field definitions.
+
+# Index field
+[Field]
+name = IDX
+info = Field with measurement index [0..n]
+type = integer
+empty_allowed = No
+unique = No
+separator = space
+merge_separators = Yes
+
+# Vorgang
+[Field]
+name = VORGANG
+info = N/A
+type = TEXT
+empty_allowed = No
+separator = space
+merge_separators = no
+
+# Schnitt
+[Field]
+name = SCHNITT
+info = N/A
+type = TEXT
+empty_allowed = No
+separator = _
+merge_separators = Yes
+
+# Level
+[Field]
+name = PLANUM
+info = N/A
+type = TEXT
+empty_allowed = No
+separator = _
+merge_separators = Yes
+
+# NUMMER
+[Field]
+name = NUMMER         
+info = N/A            
+type = Text           
+empty_allowed = yes    
+separator = _     
+merge_separators = no
+
+# INFO              
+[Field]               
+name = INFO         
+info = N/A            
+type = Text           
+empty_allowed = yes    
+separator = _     
+merge_separators = no 
+
+# Objekt
+[Field]
+name = OBJEKT
+info = N/A
+type = Text
+empty_allowed = No
+separator = space
+merge_separators = Yes
+change_case = upper
+
+@AG = Silber
+@AU = Gold
+@BR = Bronze
+@CK = Knochenbrand
+@FE = Eisen
+@GL = Glas
+@HK = Holzkohle
+@HL = Rotlehm
+@HZ = Holz
+@KE = Keramik
+@KN = Knochen
+@MU = Muenze
+@PB = Blei
+@PE = Perle
+@SG = Steingeraet
+@SL = Schlacke
+@ST = Stein
+@SX = Silex
+@ZI = Ziegel
+@FG = FG-Nagel
+@HO = Humusoberkante
+@HP = Hauptmesspunkt
+@NI = Nivellement
+@TI = Textinformation
+@FG = FG-Nagel
+@PRA = PR-A
+@PRB = PR-B
+@PRC = PR-C
+@PRD = PR-D
+@AG. = Silber
+@AU. = Gold
+@BR. = Bronze
+@CK. = Knochenbrand
+@FE. = Eisen
+@GL. = Glas
+@HK. = Holzkohle
+@HL. = Rotlehm
+@HZ. = Holz
+@KE. = Keramik
+@KN. = Knochen
+@MU. = Muenze
+@PB. = Blei
+@PE. = Perle
+@SG. = Steingeraet
+@SL. = Schlacke
+@ST. = Stein
+@SX. = Silex
+@ZI. = Ziegel
+@FG. = FG-Nagel
+@HO. = Humusoberkante
+@HP. = Hauptmesspunkt
+@NI. = Nivellement
+@TI. = Textinformation
+@FG. = FG-Nagel
+@PRA. = PR-A
+@PRB. = PR-B
+@PRC. = PR-C
+@PRD. = PR-D
+
+# X Label field: simply contains "X"
+[Field]
+name = XLABEL
+info = Useless field
+type = text
+empty_allowed = No
+separator = space
+merge_separators = Yes
+skip = Yes
+
+# X Coordinate
+[Field]
+name = COORX
+info = Holds X coordinate
+type = double
+empty_allowed = No
+separator = space
+merge_separators = Yes
+
+# Y Label field: simply contains "Y"
+[Field]
+name = YLABEL
+info = Useless field
+type = text
+empty_allowed = No
+separator = space
+merge_separators = Yes
+skip = Yes
+
+# Y Coordinate
+[Field]
+name = COORY
+info = Holds Y coordinate
+type = double
+empty_allowed = No
+separator = space
+merge_separators = Yes
+
+# Z Label field: simply contains "Z"
+[Field]
+name = ZLABEL
+info = Useless field
+type = text
+empty_allowed = No
+separator = space
+merge_separators = Yes
+skip = Yes
+
+# Z Coordinate
+[Field]
+name = COORZ
+info = Holds Z coordinate
+type = double
+empty_allowed = No
+# last field: must have no separator
