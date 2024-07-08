@@ -1,0 +1,62 @@
+README for survey2gis, Mac OS X release
+Last updated: 2016-09-18
+---
+
+This folder contains the "survey2gis" executable for Mac OS X.
+It has been compiled and tested on Mac OS X version 10.11.6 (El Capitan).
+
+Support for survey2gis on Mac OS X is initial. The current version
+is a 1:1 conversion of the Linux source code and runs on top of the
+XQuartz X11 server. This (preliminary) solution requires users to
+download and install additional software components on their computers
+(administrator privileges required), as described below.
+
+
+1. XQuartz display server
+
+You only need this if you want to use survey2gis with a graphical
+user interface (GUI). If a terminal application (CLI) is enough for you,
+then skip to the next step (2).
+
+Otherwise, go to http://xquartz.macosforge.org/landing/ then download and
+install the XQuartz DMG.
+
+
+2. Packages from Homebrew
+
+Go to http://brew.sh/ and install the "brew" tool as described there.
+Then open a Terminal.
+
+Again, if you want only the CLI software, then the following command,
+typed into the Terminal will be enough:
+
+ brew install gettext
+
+If you want to use the GUI version then you need to install the complete
+GTK+ package:
+
+ brew install gtk+
+
+
+3. Running survey2gis
+
+The GUI version can be started by launching the "survey2gis" program contained
+in this folder. Note that you need to complete steps (1) and (2) above to use
+that version.
+
+As a light-weight alternative, the folder "cli-only" contains a Mac OS X
+binary without GUI components. To use it, install "gettext" as described in
+step (2). above.
+
+
+4. Caveats
+
+Starting the XQuartz server and launching survey2gis may take several seconds.
+
+The GUI running on top of XQuartz will feel unfamiliar to Mac OS X users, but
+it should work well enough, with one notable exception: The "Input" window that
+lists files for processing sometimes disappears behind the main window after
+adding new files. Just move the main window (which will be blocked) to uncover it.
+
+We plan to provide better integration, utilizing the native OS X display
+server, in future releases.
