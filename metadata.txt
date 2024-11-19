@@ -3,15 +3,14 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=Survey2Gis Demo
+name=Survey2Gis Data Processor
 qgisMinimumVersion=3.0
-description=Survey2Gis QGIS Frontend evaluation
+description=Survey2Gis QGIS Frontend for QGIS
 version=0.1
 author=csgis gbr.
 email=toni.schoenbuchner@csgis.de
 
-about=This plugin evaluates the interaction between qgis and survey2gis binary
-
+about=S2G Data Processor is a comprehensive QGIS extension that streamlines data preparation for Survey2GIS processing. It automates the workflow by validating and preparing input data, generating optimized Survey2GIS commands, executing transformations, and seamlessly importing the results into QGIS via GeoPackage format. Ideal for archaeologists and surveyors working with field data.
 tracker=http://bugs
 repository=http://repo
 # End of mandatory metadata

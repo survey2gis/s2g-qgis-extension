@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/survey_2_gis_demo" >
+    <qresource prefix="/plugins/s2g_data_processor" >
         <file>icon.png</file>
     </qresource>
 </RCC>

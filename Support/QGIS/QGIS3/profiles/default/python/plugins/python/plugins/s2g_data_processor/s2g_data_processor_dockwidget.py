@@ -7,7 +7,7 @@ from qgis.utils import iface
 from dataclasses import dataclass, field
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "survey_2_gis_demo_dockwidget_base.ui")
+    os.path.join(os.path.dirname(__file__), "s2g_data_processor_dockwidget_base.ui")
 )
 
 logger = logging.getLogger("s2g_plugin")
@@ -27,13 +27,13 @@ class CommandOptions:
         command = []
 
         if self.parser_path:
-            command.extend(["-p", self.parser_path])
+            command.extend(["-p", os.path.normpath(self.parser_path)])
         if self.label_mode:
             command.append(f"--label-mode-line={self.label_mode}")
         if self.output_directory:
-            command.extend(["-o", self.output_directory])
-        if self.output_base_name:
-            command.extend(["-n", self.output_base_name])
+            command.extend(["-o", os.path.normpath(self.output_directory)])
+        # if self.output_base_name:
+        #     command.extend(["-n", self.output_base_name])
 
 
         for key, value in self.additional_options.items():
@@ -47,12 +47,12 @@ class CommandOptions:
         return command
 
 
-class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
+class S2gDataProcessorDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     closingPlugin = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         """Constructor."""
-        super(Survey2GisDemoDockWidget, self).__init__(parent)
+        super(S2gDataProcessorDockWidget, self).__init__(parent)
         self.setupUi(self)
 
         self.ensure_binary_executable()
@@ -61,27 +61,30 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.output_directory = None
 
         self.input_select_button.clicked.connect(self.select_input_files)
-        self.parser_select_button.clicked.connect(self.select_parser_file)
-        self.output_folder_select.clicked.connect(self.select_output_directory)
+        self.select_parser_input.clicked.connect(self.select_parser_file)
+        self.output_select_button.clicked.connect(self.select_output_directory)
         self.manual_link.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/user-attachments/files/16010974/english.pdf")))
 
-        self.process_button.clicked.connect(self.process_files)
-        self.input_data_reset.clicked.connect(
-            lambda: self.reset_text_field(self.input_select)
+
+        self.select_parsed_inputfile_button.clicked.connect(self.select_parsed_inputfile)
+
+        # self.process_button.clicked.connect(self.process_files)
+        self.reset_parsed_inputfile_button.clicked.connect(
+            lambda: self.reset_text_field(self.process_input_file_input)
         )
-        self.parser_reset.clicked.connect(
-            lambda: self.reset_text_field(self.parser_select)
+        self.reset_parser_input_button.clicked.connect(
+            lambda: self.reset_text_field(self.select_parser_input)
         )
-        self.output_folder_reset.clicked.connect(
-            lambda: self.reset_text_field(self.output_folder_select)
-        )
+        # self.output_folder_reset.clicked.connect(
+        #     lambda: self.reset_text_field(self.output_folder_select)
+        # )
 
         self.command_options = CommandOptions()
         
         # Define field mapping for options
         self.option_fields = {
             'parser_path': self.parser_select,
-            'output_base_name': self.output_basename_input,
+            # 'output_base_name': self.output_basename_input,
             'output_directory': self.output_directory_input
         }
         
@@ -148,20 +151,18 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def get_binary_path(self):
         """Return the path to the appropriate binary based on the current platform."""
         system = platform.system().lower()
+        base_path = os.path.dirname(__file__)
+        
         if system == "windows":
-            return os.path.join(
-                os.path.dirname(__file__), "survey2gis", "win32", "cli-only", "survey2gis.exe"
-            )
+            path = os.path.join(base_path, "survey2gis", "win32", "cli-only", "survey2gis.exe")
         elif system == "linux":
-            return os.path.join(
-                os.path.dirname(__file__), "survey2gis", "linux64", "cli-only", "survey2gis"
-            )
+            path = os.path.join(base_path, "survey2gis", "linux64", "cli-only", "survey2gis")
         elif system == "darwin":
-            return os.path.join(
-                os.path.dirname(__file__), "survey2gis", "macosx", "cli-only", "survey2gis"
-            )
+            path = os.path.join(base_path, "survey2gis", "macosx", "cli-only", "survey2gis")
         else:
             raise NotImplementedError("Your operating system is not supported.")
+        
+        return os.path.normpath(path)
 
     def select_input_files(self):
         """Open file dialog to select multiple input files."""
@@ -185,8 +186,17 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self, "Select Output Directory", ""
         )
         if directory:
-            self.output_directory_input.setText(directory)  # Update text field with directory path
+            self.output_select_input.setText(directory)  # Update text field with directory path
             self.command_options.output_directory = directory  # Update command options
+
+
+    def select_parsed_inputfile(self):
+        """Open file dialog to select one parser file."""
+        file, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, "Select Parser File", "", "All Files (*)"
+        )
+        if file:
+            self.process_input_file_input.setText(file)
 
 
     def reset_text_field(self, field):
@@ -213,13 +223,14 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 return
 
             # Check if either parser_profiles_select or parser_select is filled
-            if (self.parser_profiles_select.currentText() == "Choose profile" and 
-                not self.parser_select.text().strip()):
-                self.show_error_message("Please select a parser profile or a parser file.")
-                return
+            # if (self.parser_profiles_select.currentText() == "Choose profile from list" and 
+            #     not self.parser_select.text().strip()):
+            #     self.show_error_message("Please select a parser profile or a parser file.")
+            #     return
 
             self.command_options = self.read_options()
             input_files = self.input_select.text().split("; ")
+            input_files = [os.path.normpath(file) for file in input_files]
 
             command = self.build_command(input_files)
 
@@ -256,11 +267,11 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             command_options.flag_options[flag] = is_set
 
         # Check the value of parser_profiles_select and set parser_path accordingly
-        profile_text = self.parser_profiles_select.currentText()
-        if profile_text != "Choose profile":
-            command_options.parser_path = os.path.join(os.path.dirname(__file__), 'parser_profiles', profile_text)
-        else:
-            command_options.parser_path = self.parser_select.text()
+        # profile_text = self.parser_profiles_select.currentText()
+        # if profile_text != "Choose profile from list":
+        #     command_options.parser_path = os.path.join(os.path.dirname(__file__), 'parser_profiles', profile_text)
+        # else:
+        #     command_options.parser_path = self.parser_select.text()
 
         return command_options
 
@@ -327,12 +338,15 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             for suffix in shapefile_suffixes
         ]
 
+        logger.success("loading shapefiles")
+        logger.success(shapefiles)
+
         if not shapefiles:
             logger.error("No shapefiles found in output log.")
             return
 
         root = QgsProject.instance().layerTreeRoot()
-        group = root.addGroup(self.command_options.output_base_name)
+        # group = root.addGroup(self.command_options.output_base_name)
 
         for shapefile in shapefiles:
             if os.path.exists(shapefile):
@@ -368,5 +382,5 @@ class Survey2GisDemoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
 
 def classFactory(iface):
-    return Survey2GisDemoDockWidget(iface)
+    return S2gDataProcessorDockWidget(iface)
 

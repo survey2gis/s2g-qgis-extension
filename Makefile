@@ -1,5 +1,5 @@
 #/***************************************************************************
-# Survey2GisDemo
+# S2gDataProcessor
 #
 # Survey2Gis QGIS Frontend evaluation
 #							 -------------------
@@ -38,15 +38,15 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	survey_2_gis_demo.py survey_2_gis_demo_dockwidget.py
+	s2g_data_processor.py s2g_data_processor_dockwidget.py
 
-PLUGINNAME = survey_2_gis_demo
+PLUGINNAME = s2g_data_processor
 
 PY_FILES = \
 	__init__.py \
-	survey_2_gis_demo.py survey_2_gis_demo_dockwidget.py
+	s2g_data_processor.py s2g_data_processor_dockwidget.py
 
-UI_FILES = survey_2_gis_demo_dockwidget_base.ui
+UI_FILES = s2g_data_processor_dockwidget_base.ui
 
 EXTRAS = metadata.txt icon.png
 

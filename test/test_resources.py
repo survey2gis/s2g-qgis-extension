@@ -18,7 +18,7 @@ from qgis.PyQt.QtGui import QIcon
 
 
 
-class Survey2GisDemoDialogTest(unittest.TestCase):
+class S2gDataProcessorDialogTest(unittest.TestCase):
     """Test rerources work."""
 
     def setUp(self):
@@ -31,12 +31,12 @@ class Survey2GisDemoDialogTest(unittest.TestCase):
 
     def test_icon_png(self):
         """Test we can click OK."""
-        path = ':/plugins/Survey2GisDemo/icon.png'
+        path = ':/plugins/s2g_data_processor/icon.png'
         icon = QIcon(path)
         self.assertFalse(icon.isNull())
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(Survey2GisDemoResourcesTest)
+    suite = unittest.makeSuite(S2gDataProcessorResourcesTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 

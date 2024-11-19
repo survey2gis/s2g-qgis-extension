@@ -16,19 +16,19 @@ import unittest
 
 from qgis.PyQt.QtGui import QDockWidget
 
-from survey_2_gis_demo_dockwidget import Survey2GisDemoDockWidget
+from s2g_data_processor_dockwidget import S2gDataProcessorDockWidget
 
 from utilities import get_qgis_app
 
 QGIS_APP = get_qgis_app()
 
 
-class Survey2GisDemoDockWidgetTest(unittest.TestCase):
+class S2gDataProcessorDockWidgetTest(unittest.TestCase):
     """Test dockwidget works."""
 
     def setUp(self):
         """Runs before each test."""
-        self.dockwidget = Survey2GisDemoDockWidget(None)
+        self.dockwidget = S2gDataProcessorDockWidget(None)
 
     def tearDown(self):
         """Runs after each test."""
@@ -39,7 +39,7 @@ class Survey2GisDemoDockWidgetTest(unittest.TestCase):
         pass
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(Survey2GisDemoDialogTest)
+    suite = unittest.makeSuite(S2gDataProcessorDialogTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 
