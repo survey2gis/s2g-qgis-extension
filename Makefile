@@ -149,7 +149,7 @@ derase:
 	@echo "-------------------------"
 	rm -Rf $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 
-zip: deploy dclean
+zip:
 	@echo
 	@echo "---------------------------"
 	@echo "Creating plugin zip bundle."
@@ -157,7 +157,14 @@ zip: deploy dclean
 	# The zip target deploys the plugin and creates a zip file with the deployed
 	# content. You can then upload the zip file on http://plugins.qgis.org
 	rm -f $(PLUGINNAME).zip
-	cd $(HOME)/$(QGISDIR)/python/plugins; zip -9r $(CURDIR)/$(PLUGINNAME).zip $(PLUGINNAME)
+	cd "$(QGISDIR)" && \
+	zip -9r "$(CURDIR)/s2g_data_processor.zip" "$(PLUGINNAME)" \
+		-x "$(PLUGINNAME)/.git/*" \
+		-x "$(PLUGINNAME)/.pytest_cache/*" \
+		-x "$(PLUGINNAME)/_alias.txt" \
+		-x "$(PLUGINNAME)/.gitignore" \
+		-x "$(PLUGINNAME)/command_history.txt" \
+		-x "$(PLUGINNAME)/survey2gis/*"
 
 package: compile
 	# Create a zip package of the plugin named $(PLUGINNAME).zip.
