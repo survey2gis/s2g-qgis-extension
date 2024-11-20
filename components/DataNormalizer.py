@@ -79,12 +79,15 @@ class DataNormalizer:
 
     def validate_filename_input(self):
         """Validate filename input when it changes."""
-        filename_text = self.parent_widget.output_filename_input.text().strip()
-        invalid_chars = '<>:"/\\|?*\u00e4\u00f6\u00fc\u00df '  # Including German umlauts and spaces
+        original_text = self.parent_widget.output_filename_input.text()
+        filename_text = original_text.strip()
+        invalid_chars = '<>:"/\\|?*\u00e4\u00f6\u00fc\u00df'  # German umlauts
         
         if filename_text:
-            # Check for invalid characters
-            if any(char in filename_text for char in invalid_chars) or '.' in filename_text:
+            # Check for any kind of spaces or invalid characters
+            if (any(char in filename_text for char in invalid_chars) or 
+                '.' in filename_text or 
+                ' ' in original_text):  # Check for ANY spaces in original input
                 self.parent_widget.output_filename_input.setStyleSheet("background-color: #ffe6e6;")
                 return False
             else:
