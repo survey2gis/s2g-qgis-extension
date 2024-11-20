@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 survey2gis/
+command_history.txt
 
 # C extensions
 *.so
