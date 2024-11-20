@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from osgeo import ogr
 from qgis.gui import QgsMessageBar
 from qgis.core import Qgis
+from datetime import datetime
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "s2g_data_processor_dockwidget_base.ui")
@@ -56,10 +57,11 @@ class S2gDataProcessorDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         
         self.output_base_name = None
         self.output_directory = None
-        self.CONCAT_OUTPUT_NAME = "concatenated_output.txt"
         self.command_history_file = os.path.join(os.path.dirname(__file__), "command_history.txt")
 
-        self.data_normalizer = DataNormalizer(self)
+        self.data_normalizer = DataNormalizer()
+        self.data_normalizer.setup(self)
+        
         self.data_processor = DataProcessor(self)
     
         self.manual_link.clicked.connect(

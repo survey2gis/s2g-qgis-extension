@@ -1,24 +1,26 @@
-
 import os
-
-from PyQt5 import QtWidgets, uic
+from datetime import datetime
 import shutil
-from .. s2g_logging_new import Survey2GISLogger
+from PyQt5 import QtWidgets, uic
+from .. s2g_logging import Survey2GISLogger
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), '..', "s2g_data_processor_dockwidget_base.ui")
 )
 
-
 class DataNormalizer:
-    def __init__(self, parent_widget):
-        """Initialize with a reference to the main widget and set up input handling."""
+    def __init__(self):
+        self.parent_widget = None
+        self.logger = None
+
+    def setup(self, parent_widget):
         self.parent_widget = parent_widget
-        self.connect_signals()
         self.logger = Survey2GISLogger(parent_widget)
+        self.connect_signals()
 
     def connect_signals(self):
-        """Connect GUI elements to their respective methods."""
+        if not self.parent_widget:
+            return
 
         # Input
         self.parent_widget.input_select_button.clicked.connect(self.select_input_files)
@@ -26,11 +28,14 @@ class DataNormalizer:
             lambda: self.reset_text_field(self.parent_widget.input_select)
         )
 
-        # output
+        # Output
         self.parent_widget.output_select_button.clicked.connect(self.select_output_directory)
         self.parent_widget.output_reset_button.clicked.connect(
             lambda: self.reset_text_field(self.parent_widget.output_select_input)
         )
+
+        # Filename input validation
+        self.parent_widget.output_filename_input.textChanged.connect(self.validate_filename_input)
 
         # Tasks: copy styles
         self.parent_widget.styles_input_select_button.clicked.connect(self.select_styles_input_directory)
@@ -41,20 +46,14 @@ class DataNormalizer:
         # Run tasks
         self.parent_widget.run_button.clicked.connect(self.run_normalize)
 
-    # GUI Methods
-
-    def reset_text_field(self, field):
-        field.setText("")
-
     def select_input_files(self):
-        """Open file dialog to select multiple input files and display in input_select field."""
-        files, _ = QtWidgets.QFileDialog.getOpenFileNames(
-            self.parent_widget, "Select Input File(s)", "", "Data Files (*.dat *.txt);;All Files (*)"
-        )
-        if files:
-            files_list = "; ".join(files)
-            self.parent_widget.input_select.setText(files_list)
-            # self.logger.log_message(files_list, level="info", to_tab=True, to_gui=True, to_notification=True)
+            """Open file dialog to select multiple input files and display in input_select field."""
+            files, _ = QtWidgets.QFileDialog.getOpenFileNames(
+                self.parent_widget, "Select Input File(s)", "", "Data Files (*.dat *.txt);;All Files (*)"
+            )
+            if files:
+                files_list = "; ".join(files)
+                self.parent_widget.input_select.setText(files_list)
 
     def select_output_directory(self):
         """Open file dialog to select an output directory."""
@@ -63,92 +62,129 @@ class DataNormalizer:
         )
         if directory:
             self.parent_widget.output_select_input.setText(directory)
-            self.parent_widget.command_options.output_directory = directory  # Todo: why do we need this?
+            self.parent_widget.command_options.output_directory = directory
 
     def select_styles_input_directory(self):
-        """Open file dialog to select an output directory."""
+        """Open file dialog to select a styles directory."""
         directory = QtWidgets.QFileDialog.getExistingDirectory(
-            self.parent_widget, "Select Output Directory", ""
+            self.parent_widget, "Select Styles Directory", ""
         )
         if directory:
-            self.parent_widget.styles_folder_path_input.setText(directory) 
-            self.parent_widget.command_options.styles_folder_path_input = directory  # Todo: why do we need this?
+            self.parent_widget.styles_folder_path_input.setText(directory)
+            self.parent_widget.command_options.styles_folder_path_input = directory
 
-    # Tasks
+    def reset_text_field(self, field):
+        """Reset the text in a given field."""
+        field.setText("")
+
+    def validate_filename_input(self):
+        """Validate filename input when it changes."""
+        filename_text = self.parent_widget.output_filename_input.text().strip()
+        invalid_chars = '<>:"/\\|?*\u00e4\u00f6\u00fc\u00df '  # Including German umlauts and spaces
+        
+        if filename_text:
+            # Check for invalid characters
+            if any(char in filename_text for char in invalid_chars) or '.' in filename_text:
+                self.parent_widget.output_filename_input.setStyleSheet("background-color: #ffe6e6;")
+                return False
+            else:
+                self.parent_widget.output_filename_input.setStyleSheet("background-color: #e6ffe6;")
+                return True
+        else:
+            self.parent_widget.output_filename_input.setStyleSheet("")
+            return False
+
+    def validate_epsg_input(self):
+        """Validate EPSG input when it changes."""
+        epsg_text = self.parent_widget.epsg_input.text().strip()
+        if epsg_text:
+            try:
+                epsg_code = int(epsg_text)
+                if self.VALID_EPSG_RANGE[0] <= epsg_code <= self.VALID_EPSG_RANGE[1]:
+                    self.parent_widget.epsg_input.setStyleSheet("background-color: #e6ffe6;")
+                    return True
+                else:
+                    self.parent_widget.epsg_input.setStyleSheet("background-color: #ffe6e6;")
+            except ValueError:
+                self.parent_widget.epsg_input.setStyleSheet("background-color: #ffe6e6;")
+        else:
+            self.parent_widget.epsg_input.setStyleSheet("")
+        return False
+
+    def get_concat_filename(self):
+        """Generate concatenated filename based on custom input or default pattern."""
+        custom_filename = self.parent_widget.output_filename_input.text().strip()
+        
+        if custom_filename and self.validate_filename_input():
+            return f"{custom_filename}.txt"
+        
+        return f"s2g_merged_input_files.txt"
+
 
     def run_normalize(self):
         if (not self.parent_widget.input_select.text().strip() or
             not self.parent_widget.output_select_input.text().strip()):
-            self.logger.log_message("Please fill all required fields in Tab 'Normalize'", level="error", to_tab=True, to_gui=True, to_notification=True)
+            self.logger.log_message("Please fill all required fields in Tab 'Normalize'", 
+                                  level="error", to_tab=True, to_gui=True, to_notification=True)
             return
 
         try:
-            self._concatenate_files()
             output_directory = self.parent_widget.output_select_input.text().strip()
-            output_file_path = os.path.join(output_directory, self.parent_widget.CONCAT_OUTPUT_NAME) # Todo: should CONCAT_OUTPUT_NAME be moved to this class?
+            # Get filename with potential EPSG code
+            output_filename = self.get_concat_filename()
+            output_file_path = os.path.join(output_directory, output_filename)
 
-            # Clean the concatenated output file
+            self._concatenate_files(output_file_path)
             self._clean_file_content(output_file_path)
 
             if self.parent_widget.copy_styles_checkbox.isChecked():
                 self._copy_qml_files()
             
             if self.parent_widget.standard_geotags_checkbox.isChecked():
-                self._replace_geotag_symbols()  # Call the function to replace & with $
+                self._replace_geotag_symbols(output_file_path)
             
             if self.parent_widget.fix_lines_checkbox.isChecked():
-                self._fix_line_numbering()  # Call the function to fix line numbering
+                self._fix_line_numbering(output_file_path)
 
-            # Add columns after line numbering (if checkbox checked and input filled)
-            if self.parent_widget.cols_after_id_checkbox.isChecked() and self.parent_widget.cols_after_ids_input.text().strip():
+            if (self.parent_widget.cols_after_id_checkbox.isChecked() and 
+                self.parent_widget.cols_after_ids_input.text().strip()):
                 self._add_columns_after_line_number(output_file_path)
-            else:
-                self.logger.log_message("Checkbox unchecked or input string is empty, skipping column addition.", level="info", to_tab=True, to_gui=False, to_notification=False)
-
 
             # update the process text field
             self.parent_widget.process_input_file_input.setText(output_file_path)
-            self.logger.log_message("Files successfully processed!", level="info", to_tab=True, to_gui=True, to_notification=True)
+            self.logger.log_message("Files successfully processed!", 
+                                  level="info", to_tab=True, to_gui=True, to_notification=True)
 
         except Exception as e:
-            self.logger.log_message(f"Error during file processing: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
+            self.logger.log_message(f"Error during file processing: {e}", 
+                                  level="error", to_tab=True, to_gui=True, to_notification=True)
 
-    def _concatenate_files(self):
+    # Keep all your existing helper methods (_concatenate_files, _clean_file_content, etc.)
+    def _concatenate_files(self, output_file_path):
         """Concatenate selected .txt or .dat files alphabetically and save the result."""
         input_files = self.parent_widget.input_select.text().split("; ")
         input_files = sorted([os.path.normpath(file) for file in input_files if file.endswith(('.txt', '.dat'))])
         
         if not input_files:
-            self.logger.log_message("No valid .txt or .dat files selected", level="error", to_tab=True, to_gui=True, to_notification=True)
+            self.logger.log_message("No valid .txt or .dat files selected", 
+                                  level="error", to_tab=True, to_gui=True, to_notification=True)
             raise FileNotFoundError("No valid .txt or .dat files selected")
-
-        # Output file path based on the selected output directory and base name
-        output_directory = self.parent_widget.output_select_input.text().strip()
-        output_file_path = os.path.join(output_directory, self.parent_widget.CONCAT_OUTPUT_NAME)
 
         with open(output_file_path, 'w', encoding='utf-8') as output_file:
             for input_file in input_files:
                 with open(input_file, 'r', encoding='utf-8') as f:
                     content = f.readlines()
-
-                    # Filter out empty lines or lines with only whitespace
                     content = [line.strip() for line in content if line.strip()]
-
-                    # Ensure there's a newline before appending content from the next file
-                    if os.path.getsize(output_file_path) > 0:  # If output file is not empty
+                    if os.path.getsize(output_file_path) > 0:
                         with open(output_file_path, 'rb+') as check_file:
                             check_file.seek(-1, os.SEEK_END)
                             last_char = check_file.read(1).decode()
-
-                        if last_char != "\n":  # Append a newline if not present
+                        if last_char != "\n":
                             output_file.write("\n")
-
-                    # Write the non-empty lines to the output file
                     output_file.write("\n".join(content))
-
-                    # Ensure the content written ends with a newline
-                    if content:  # Only add a newline if content was written
+                    if content:
                         output_file.write("\n")
+
 
     def _clean_file_content(self, file_path):
         """
@@ -231,50 +267,32 @@ class DataNormalizer:
         else:
             self.logger.log_message("No SVG folder found in the styles folder.", 
                                 level="info", to_tab=True, to_gui=True, to_notification=False)
-    def _replace_geotag_symbols(self):
-        """Replace & with $ in concatenated_output.txt if the standard_geotags_checkbox is checked."""
-
-        # Get the path of the concatenated output file
-        output_directory = self.parent_widget.output_select_input.text().strip()
-        concatenated_output_file = os.path.join(output_directory, self.parent_widget.CONCAT_OUTPUT_NAME)
-
-        if not os.path.isfile(concatenated_output_file):
-            self.logger.log_message(f"Output file not found: {concatenated_output_file}", level="error", to_tab=True, to_gui=True, to_notification=True)
-            return
-
+    def _replace_geotag_symbols(self, output_file_path):
+        """Replace & with $ in the specified output file."""
         try:
             # Read the contents of the file
-            with open(concatenated_output_file, 'r', encoding='utf-8') as file:
+            with open(output_file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
 
             # Replace & with $
             updated_content = content.replace('&', '$')
 
             # Write the updated content back to the file
-            with open(concatenated_output_file, 'w', encoding='utf-8') as file:
+            with open(output_file_path, 'w', encoding='utf-8') as file:
                 file.write(updated_content)
 
-
-            self.logger.log_message(f"Geotag symbols replaced in {concatenated_output_file}", level="info", to_tab=True, to_gui=True, to_notification=False)
-
+            self.logger.log_message(f"Geotag symbols replaced in {output_file_path}", 
+                                level="info", to_tab=True, to_gui=True, to_notification=False)
 
         except Exception as e:
-            self.logger.log_message("Error updating geotag symbols: {e}", level="error", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"Error updating geotag symbols: {e}", 
+                                level="error", to_tab=True, to_gui=True, to_notification=False)
 
-    def _fix_line_numbering(self):
-        """Fix line numbering in the concatenated_output.txt file if fix_lines_checkbox is checked."""
-
-        # Get the path of the concatenated output file
-        output_directory = self.parent_widget.output_select_input.text().strip()
-        concatenated_output_file = os.path.join(output_directory, self.parent_widget.CONCAT_OUTPUT_NAME)
-
-        if not os.path.isfile(concatenated_output_file):
-            self.logger.log_message(f"Output file not found: {concatenated_output_file}", level="error", to_tab=True, to_gui=True, to_notification=False)
-            return
-
+    def _fix_line_numbering(self, output_file_path):
+        """Fix line numbering in the specified file."""
         try:
             # Read the content of the file
-            with open(concatenated_output_file, 'r', encoding='utf-8') as file:
+            with open(output_file_path, 'r', encoding='utf-8') as file:
                 lines = file.readlines()
 
             # Process each line: remove erroneous numbering and reassign correct numbering
@@ -289,20 +307,18 @@ class DataNormalizer:
                     fixed_lines.append(line.strip())  # In case the line has no spaces or is invalid
 
             # Write the fixed content back to the file
-            with open(concatenated_output_file, 'w', encoding='utf-8') as file:
-                file.write("\n".join(fixed_lines))
+            with open(output_file_path, 'w', encoding='utf-8') as file:
+                file.write("\n".join(fixed_lines) + "\n")
 
-            self.logger.log_message(f"Line numbering fixed in {concatenated_output_file}", level="info", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"Line numbering fixed in {output_file_path}", 
+                                level="info", to_tab=True, to_gui=True, to_notification=False)
 
         except Exception as e:
-            self.logger.log_message(f"Error fixing line numbering in {concatenated_output_file}: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
+            self.logger.log_message(f"Error fixing line numbering in {output_file_path}: {e}", 
+                                level="error", to_tab=True, to_gui=True, to_notification=True)
 
-
-    def _add_columns_after_line_number(self, file_path):
-        """
-        Adds the split string (from the user input) directly after the line numbering in each line of the file.
-        A space will be added before the rest of the line only if the input originally ended with exactly one space.
-        """
+    def _add_columns_after_line_number(self, output_file_path):
+        """Add columns after line number in the specified file."""
         try:
             # Get the raw input string
             raw_input = self.parent_widget.cols_after_ids_input.text().rstrip('\n')
@@ -312,7 +328,7 @@ class DataNormalizer:
             input_string = raw_input.rstrip()
             
             # Read the content of the file
-            with open(file_path, 'r', encoding='utf-8') as file:
+            with open(output_file_path, 'r', encoding='utf-8') as file:
                 lines = file.readlines()
 
             updated_lines = []
@@ -329,14 +345,17 @@ class DataNormalizer:
                     updated_lines.append(line.strip())
 
             # Write the updated content back to the file
-            with open(file_path, 'w', encoding='utf-8') as file:
+            with open(output_file_path, 'w', encoding='utf-8') as file:
                 file.write("\n".join(updated_lines) + "\n")  # Ensure a newline at the end
 
-            self.logger.log_message(f"Columns added to file: {file_path}", level="info", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"Columns added to file: {output_file_path}", 
+                                level="info", to_tab=True, to_gui=True, to_notification=False)
 
         except Exception as e:
-            self.logger.log_message(f"Error adding columns to file {file_path}: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
-
+            self.logger.log_message(f"Error adding columns to file {output_file_path}: {e}", 
+                                level="error", to_tab=True, to_gui=True, to_notification=True)
+            
+            
     # def _add_columns_after_line_number(self, file_path):
     #     """
     #     Adds the split string (from the user input) after the line numbering in each line of the file.

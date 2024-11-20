@@ -5,12 +5,14 @@ from qgis.core import QgsProject
 from osgeo import ogr, osr
 from qgis.core import QgsCoordinateReferenceSystem, QgsPointXY, QgsRectangle
 
-from .. s2g_logging_new import Survey2GISLogger
+from .. s2g_logging import Survey2GISLogger
 import os
 from qgis.core import QgsProject
 import re
 import fnmatch
 import configparser
+from datetime import datetime
+
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), '..', "s2g_data_processor_dockwidget_base.ui")
@@ -23,6 +25,7 @@ class DataProcessor:
         """Access main widget for shared variables and settings."""
         self.parent_widget = parent_widget
         self.logger = Survey2GISLogger(parent_widget)
+        self.VALID_EPSG_RANGE = (1000, 99999)
 
         self.command_history_file = os.path.join(os.path.dirname(__file__), "..", "command_history.txt")
         self.current_commands = []
@@ -88,6 +91,9 @@ class DataProcessor:
             lambda: self.reset_text_field(self.parent_widget.shape_output_path_input)
         )
 
+        # epsg input
+        self.parent_widget.epsg_input.textChanged.connect(self.validate_epsg_input)
+
         # alias Input
         self.parent_widget.alias_file_select_button.clicked.connect(self.select_alias_file)
         self.parent_widget.alias_file_reset_button.clicked.connect(
@@ -139,6 +145,23 @@ class DataProcessor:
             self.parent_widget.command_options.output_directory = directory 
 
  
+    def validate_epsg_input(self):
+        """Validate EPSG input when it changes."""
+        epsg_text = self.parent_widget.epsg_input.text().strip()
+        if epsg_text:
+            try:
+                epsg_code = int(epsg_text)
+                if self.VALID_EPSG_RANGE[0] <= epsg_code <= self.VALID_EPSG_RANGE[1]:
+                    self.parent_widget.epsg_input.setStyleSheet("background-color: #e6ffe6;")
+                    return True
+                else:
+                    self.parent_widget.epsg_input.setStyleSheet("background-color: #ffe6e6;")
+            except ValueError:
+                self.parent_widget.epsg_input.setStyleSheet("background-color: #ffe6e6;")
+        else:
+            self.parent_widget.epsg_input.setStyleSheet("")
+        return False
+
     # => Command generation methods
 
     def add_command(self):
@@ -419,7 +442,11 @@ class DataProcessor:
                 # Set the output directory and GeoPackage path
                 if output_dir is None:
                     output_dir = current_output_dir
-                    gpkg_path = os.path.join(output_dir, "merged_data.gpkg")  # One GeoPackage for all
+                    custom_filename = self.parent_widget.output_filename_input.text().strip()
+                    if custom_filename:
+                        gpkg_path = os.path.join(output_dir, f"{custom_filename}.gpkg")
+                    else:
+                        gpkg_path = os.path.join(output_dir, f"s2g_merged_data_{datetime.now().strftime('%Y-%m-%d-%H_%M')}.gpkg")
 
                 # Skip if already processed
                 if basename in processed_basenames:
@@ -525,32 +552,112 @@ class DataProcessor:
             # Cleanup: Close the GeoPackage
             del out_ds
 
+    # def shapefiles_to_gpkg(self, files, out_ds, use_project_crs=True):
+    #     """
+    #     Add layers from GeoJSON/Shapefile files to a GeoPackage with renamed fields.
+        
+    #     Args:
+    #         files: List of files to process
+    #         out_ds: Output datasource
+    #         use_project_crs: If True, use project CRS, if False, create without CRS
+    #     """
+    #     created_layers = []
+        
+    #     # Get project CRS if needed
+    #     if use_project_crs:
+    #         project_crs = QgsProject.instance().crs()
+    #         srs = osr.SpatialReference()
+    #         auth_id = project_crs.authid()
+    #         if auth_id.startswith('EPSG:'):
+    #             epsg_code = int(auth_id.split(':')[1])
+    #             srs.ImportFromEPSG(epsg_code)
+    #             self.logger.log_message(f"Using project CRS: {project_crs.description()} ({auth_id})", 
+    #                                 level="info", to_tab=True, to_gui=True, to_notification=False)
+    #         else:
+    #             self.logger.log_message(f"Project CRS is not EPSG based. Creating without CRS.", 
+    #                                 level="warning", to_tab=True, to_gui=True, to_notification=True)
+    #             use_project_crs = False
+
+    #     for file in files:
+    #         ds = ogr.Open(file)
+    #         if ds is None:
+    #             self.logger.log_message(f"Could not open {file}", 
+    #                                 level="error", to_tab=True, to_gui=True, to_notification=True)
+    #             continue
+
+    #         lyr = ds.GetLayer()
+    #         layer_name = os.path.splitext(os.path.basename(file))[0]
+
+    #         # Create new layer with SRS if specified
+    #         new_layer_defn = self.get_renamed_layer_defn(lyr)
+    #         if use_project_crs:
+    #             new_layer = out_ds.CreateLayer(layer_name, srs, lyr.GetGeomType())
+    #             self.logger.log_message(f"Created layer {layer_name} with project CRS", 
+    #                                 level="info", to_tab=True, to_gui=False, to_notification=False)
+    #         else:
+    #             new_layer = out_ds.CreateLayer(layer_name, geom_type=lyr.GetGeomType())
+    #             self.logger.log_message(f"Created layer {layer_name} without CRS", 
+    #                                 level="info", to_tab=True, to_gui=False, to_notification=False)
+
+    #         # Add fields from new layer definition
+    #         for i in range(new_layer_defn.GetFieldCount()):
+    #             new_layer.CreateField(new_layer_defn.GetFieldDefn(i))
+
+    #         # Copy features
+    #         for feature in lyr:
+    #             new_feature = ogr.Feature(new_layer.GetLayerDefn())
+    #             for i in range(lyr.GetLayerDefn().GetFieldCount()):
+    #                 original_field_name = lyr.GetLayerDefn().GetFieldDefn(i).GetName()
+    #                 alias_field_name = self.alias_mapping.get(original_field_name, original_field_name)
+    #                 new_feature.SetField(alias_field_name, feature.GetField(original_field_name))
+
+    #             new_feature.SetGeometry(feature.GetGeometryRef())
+    #             new_layer.CreateFeature(new_feature)
+    #             new_feature = None
+
+    #         created_layers.append(layer_name)
+    #         ds = None
+
+    #     return created_layers
+
+    def _get_crs_from_command(self, layer_name):
+        """
+        Extract CRS from command line that matches the layer name.
+        Returns (srs, epsg_code) tuple or (None, None) if not found.
+        """
+        try:
+            # Get commands from command field
+            commands = [cmd.strip() for cmd in self.parent_widget.command_code_field.toPlainText().split('\n') if cmd.strip()]
+            
+            # Find command with matching layer name
+            for command in commands:
+                if f'-n {layer_name}' in command or f'-n "{layer_name}"' in command:
+                    # Check for --proj-out parameter
+                    proj_match = re.search(r'--proj-out=(?:epsg:)?(\d+)', command.lower())
+                    if proj_match:
+                        epsg_code = int(proj_match.group(1))
+                        srs = osr.SpatialReference()
+                        srs.ImportFromEPSG(epsg_code)
+                        self.logger.log_message(
+                            f"Using CRS from command line --proj-out for {layer_name}: EPSG:{epsg_code}", 
+                            level="info", to_tab=True, to_gui=True, to_notification=False
+                        )
+                        return srs, epsg_code
+            return None, None
+        except Exception as e:
+            self.logger.log_message(
+                f"Error parsing command line CRS: {str(e)}", 
+                level="warning", to_tab=True, to_gui=True, to_notification=False
+            )
+            return None, None
+
     def shapefiles_to_gpkg(self, files, out_ds, use_project_crs=True):
         """
         Add layers from GeoJSON/Shapefile files to a GeoPackage with renamed fields.
-        
-        Args:
-            files: List of files to process
-            out_ds: Output datasource
-            use_project_crs: If True, use project CRS, if False, create without CRS
+        Checks CRS sources in order: command line, epsg_input field.
         """
         created_layers = []
         
-        # Get project CRS if needed
-        if use_project_crs:
-            project_crs = QgsProject.instance().crs()
-            srs = osr.SpatialReference()
-            auth_id = project_crs.authid()
-            if auth_id.startswith('EPSG:'):
-                epsg_code = int(auth_id.split(':')[1])
-                srs.ImportFromEPSG(epsg_code)
-                self.logger.log_message(f"Using project CRS: {project_crs.description()} ({auth_id})", 
-                                    level="info", to_tab=True, to_gui=True, to_notification=False)
-            else:
-                self.logger.log_message(f"Project CRS is not EPSG based. Creating without CRS.", 
-                                    level="warning", to_tab=True, to_gui=True, to_notification=True)
-                use_project_crs = False
-
         for file in files:
             ds = ogr.Open(file)
             if ds is None:
@@ -560,23 +667,49 @@ class DataProcessor:
 
             lyr = ds.GetLayer()
             layer_name = os.path.splitext(os.path.basename(file))[0]
+            srs = None
+            epsg_code = None
+
+            # Priority 1: Check command line for this layer
+            srs, epsg_code = self._get_crs_from_command(layer_name)
+
+            # Priority 2: Check epsg_input if no command line CRS found
+            if not srs:
+                epsg_text = self.parent_widget.epsg_input.text().strip()
+                if epsg_text:
+                    try:
+                        epsg_code = int(epsg_text)
+                        srs = osr.SpatialReference()
+                        srs.ImportFromEPSG(epsg_code)
+                        self.logger.log_message(
+                            f"Using CRS from EPSG input for {layer_name}: EPSG:{epsg_code}", 
+                            level="info", to_tab=True, to_gui=True, to_notification=False
+                        )
+                    except (ValueError, TypeError) as e:
+                        self.logger.log_message(
+                            f"Invalid EPSG code in input: {epsg_text}", 
+                            level="warning", to_tab=True, to_gui=True, to_notification=True
+                        )
 
             # Create new layer with SRS if specified
             new_layer_defn = self.get_renamed_layer_defn(lyr)
-            if use_project_crs:
+            if srs:
                 new_layer = out_ds.CreateLayer(layer_name, srs, lyr.GetGeomType())
-                self.logger.log_message(f"Created layer {layer_name} with project CRS", 
-                                    level="info", to_tab=True, to_gui=False, to_notification=False)
+                self.logger.log_message(
+                    f"Created layer {layer_name} with CRS EPSG:{epsg_code}", 
+                    level="info", to_tab=True, to_gui=False, to_notification=False
+                )
             else:
                 new_layer = out_ds.CreateLayer(layer_name, geom_type=lyr.GetGeomType())
-                self.logger.log_message(f"Created layer {layer_name} without CRS", 
-                                    level="info", to_tab=True, to_gui=False, to_notification=False)
+                self.logger.log_message(
+                    f"Created layer {layer_name} without CRS", 
+                    level="info", to_tab=True, to_gui=False, to_notification=False
+                )
 
-            # Add fields from new layer definition
+            # Add fields and copy features
             for i in range(new_layer_defn.GetFieldCount()):
                 new_layer.CreateField(new_layer_defn.GetFieldDefn(i))
 
-            # Copy features
             for feature in lyr:
                 new_feature = ogr.Feature(new_layer.GetLayerDefn())
                 for i in range(lyr.GetLayerDefn().GetFieldCount()):
@@ -592,6 +725,7 @@ class DataProcessor:
             ds = None
 
         return created_layers
+
 
     def get_renamed_layer_defn(self, layer):
         """Create a new LayerDefn with renamed fields based on the alias mapping."""

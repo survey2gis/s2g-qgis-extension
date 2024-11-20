@@ -9,7 +9,7 @@ from qgis.PyQt.QtWidgets import QAction
 from .resources import *
 from .s2g_data_processor_dockwidget import S2gDataProcessorDockWidget
 import shutil
-from .s2g_logging import log_plugin_message
+from .s2g_logging import Survey2GISLogger
 
 
 class S2gDataProcessor:
@@ -20,6 +20,7 @@ class S2gDataProcessor:
         self.plugin_dir = os.path.dirname(__file__)
         self.binaries_url = "https://github.com/survey2gis/survey-tools/releases/download/v1.5.2-bin-only/survey2gis-binaries-only.zip"
         self.download_dir = os.path.join(self.plugin_dir, "binaries")
+        self.logger = Survey2GISLogger()
 
         self._download_and_extract_binaries()
 
@@ -120,24 +121,25 @@ class S2gDataProcessor:
                 st = os.stat(binary_path)
                 if not (st.st_mode & 0o111):
                     os.chmod(binary_path, st.st_mode | 0o111)
-                    log_plugin_message(f"Set executable permissions for {binary_path}")
+                    self.logger.log_message(f"Set executable permissions for {binary_path}", level="info", to_tab=True, to_gui=False, to_notification=False)
                 else:
-                    log_plugin_message(f"{binary_path} is already executable")
+                    self.logger.log_message(f"{binary_path} is already executable", level="info", to_tab=True, to_gui=False, to_notification=False)
 
                     return True
             elif system == "windows":
                 # On Windows, do nothing as it doesn't use chmod for executable permissions
                 pass
             else:
-                log_plugin_message(f"Unsupported operating system: {system}", "error")
+                self.logger.log_message(f"Unsupported operating system: {system}", level="error", to_tab=True, to_gui=False, to_notification=False)
+
         else:
-            log_plugin_message(f"Binary {binary_path} not found", "error")
+            self.logger.log_message(f"Binary {binary_path} not found", level="error", to_tab=True, to_gui=False, to_notification=False)
             return False
 
     def _download_and_extract_binaries(self):
         download_binary = self.ensure_binary_executable()
         if download_binary == False:
-            log_plugin_message(f"Downloading binary again")
+            self.logger.log_message(f"Downloading binary", level="info", to_tab=True, to_gui=False, to_notification=False)
 
             if not os.path.exists(self.download_dir):
                 os.makedirs(self.download_dir)
