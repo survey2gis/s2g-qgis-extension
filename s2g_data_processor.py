@@ -21,11 +21,16 @@ class S2gDataProcessor:
         self.binaries_url = "https://github.com/survey2gis/survey-tools/releases/download/v1.5.2-bin-only/survey2gis-binaries-only.zip"
         self.download_dir = os.path.join(self.plugin_dir, "binaries")
         self.logger = Survey2GISLogger()
+        # Initialize settings
+        self.settings = QSettings('CSGIS', 'Survey2GIS_DataProcessor')
 
         self._download_and_extract_binaries()
 
         locale = QSettings().value('locale/userLocale')[0:2]
-        locale_path = os.path.join(self.plugin_dir, 'i18n', 'S2gDataProcessor_{}.qm'.format(locale))
+        locale_path = os.path.join(
+            self.plugin_dir,
+            'i18n',
+            'S2gDataProcessor_{}.qm'.format(locale))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -79,11 +84,56 @@ class S2gDataProcessor:
         self.pluginIsActive = False
 
     def unload(self):
-        for action in self.actions:
-            self.iface.removePluginMenu(self.tr(u'&Survey2Gis Data Processor'), action)
-            self.iface.removeToolBarIcon(action)
-        del self.toolbar
+        """Removes the plugin menu item and icon from QGIS GUI.
+        Only cleans up settings during actual uninstallation."""
+        try:
+            # Remove the plugin menu item and icon
+            for action in self.actions:
+                self.iface.removePluginMenu(
+                    self.tr(u'&Survey2Gis Data Processor'),
+                    action)
+                self.iface.removeToolBarIcon(action)
+            
+            # Delete the toolbar
+            del self.toolbar
 
+            # Only clean up settings if this is a real uninstall
+            # Check if plugin directory still exists (it won't during uninstall)
+            if not os.path.exists(self.plugin_dir):
+                self.cleanup_settings()
+                self.logger.log_message(
+                    "Plugin uninstalled - settings cleaned up", 
+                    level="info", to_tab=True, to_gui=True, to_notification=False
+                )
+
+        except Exception as e:
+            self.logger.log_message(
+                f"Error during plugin unload: {str(e)}", 
+                level="error", to_tab=True, to_gui=True, to_notification=True
+            )
+
+    def cleanup_settings(self):
+        """Clean up all plugin-related settings."""
+        try:
+            # Clean up normalize settings
+            self.settings.beginGroup('s2g_normalize')
+            self.settings.remove('')
+            self.settings.endGroup()
+
+            # Force settings to be written to disk
+            self.settings.sync()
+
+            self.logger.log_message(
+                "Plugin settings cleaned up successfully", 
+                level="info", to_tab=True, to_gui=True, to_notification=False
+            )
+
+        except Exception as e:
+            self.logger.log_message(
+                f"Error cleaning up settings: {str(e)}", 
+                level="error", to_tab=True, to_gui=True, to_notification=True
+            )
+            
     def run(self):
         if not self.pluginIsActive:
             self.pluginIsActive = True
