@@ -9,3 +9,5 @@ The extension:
 - Integrates processed geometries directly into QGIS for further analysis.
 
 The survey2gis program is included as part of the extension for seamless integration.
+
+● Visit https://s2qgis-docs.survey-tools.org to get started.
