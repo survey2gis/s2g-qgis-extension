@@ -189,30 +189,40 @@ class DataProcessor:
             self.logger.log_message(f"File not found: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
 
     def read_options(self):
-        """Read options from UI fields and update command_options."""
-        # Read main options
-        for option, widget in self.option_fields.items():
-            value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
-            setattr(self.parent_widget.command_options, option, value)
-
-        # Read additional options
-        for key, widget in self.additional_options_fields.items():
-            if key == '--selection':
-                # Skip adding selection to additional_options as we'll handle it separately
+            """Read options from UI fields and update command_options."""
+            # Read main options
+            for option, widget in self.option_fields.items():
                 value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
-                self.parent_widget.command_options.selections = self.process_selection_input(value)
-                continue
-            
-            value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
-            self.parent_widget.command_options.additional_options[key] = value
+                setattr(self.parent_widget.command_options, option, value)
 
-        # Read flag options
-        for flag, widget in self.flag_options_fields.items():
-            is_set = widget.isChecked()
-            self.parent_widget.command_options.flag_options[flag] = is_set
+            # Read additional options
+            for key, widget in self.additional_options_fields.items():
+                # Handle special cases for topology and label-mode-poly selects
+                if key in ['--topology', '--label-mode-poly']:
+                    value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
+                    # Only add the option if it's not "select"
+                    if value and value.lower() != "select":
+                        self.parent_widget.command_options.additional_options[key] = value
+                    continue
+                
+                # Handle selection separately
+                if key == '--selection':
+                    value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
+                    self.parent_widget.command_options.selections = self.process_selection_input(value)
+                    continue
+                
+                # Handle all other options normally
+                value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) else widget.text()
+                if value:  # Only add non-empty values
+                    self.parent_widget.command_options.additional_options[key] = value
 
-        self.parent_widget.command_options.parser_path = self.parent_widget.select_parser_input.text()
-        return self.parent_widget.command_options
+            # Read flag options
+            for flag, widget in self.flag_options_fields.items():
+                is_set = widget.isChecked()
+                self.parent_widget.command_options.flag_options[flag] = is_set
+
+            self.parent_widget.command_options.parser_path = self.parent_widget.select_parser_input.text()
+            return self.parent_widget.command_options
 
     def build_command(self, generated_input_file):
         """Build the command to execute survey2gis."""
@@ -1031,7 +1041,7 @@ class DataProcessor:
         try:
             with open(self.command_history_file, 'w', encoding='utf-8') as f:
                 f.write(self.parent_widget.command_code_field.toPlainText())
-            self.logger.log_message(f"Command history saved to {self.command_history_file}", level="success", to_tab=True, to_gui=False, to_notification=True)
+            self.logger.log_message(f"Command history saved to {self.command_history_file}", level="success", to_tab=True, to_gui=False, to_notification=False)
 
         except Exception as e:
             self.logger.log_message(f"Error saving command history: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)

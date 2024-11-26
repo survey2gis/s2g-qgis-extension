@@ -64,8 +64,12 @@ class S2gDataProcessorDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         
         self.data_processor = DataProcessor(self)
     
-        self.manual_link.clicked.connect(
+        self.user_manual.clicked.connect(
             lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/user-attachments/files/16010974/english.pdf"))
+        )
+
+        self.online_help.clicked.connect(
+            lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://s2qgis-docs.survey-tools.org"))
         )
 
         self.command_options = CommandOptions()
