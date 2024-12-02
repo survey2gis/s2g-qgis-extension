@@ -7,12 +7,12 @@ name=Survey2Gis Data Processor
 qgisMinimumVersion=3.0
 description=Survey2Gis QGIS Frontend for QGIS
 version=0.1
-author=csgis gbr.
+author=Landesamt für Denkmalpflege im Regierungspräsidium Stuttgart; CSGIS gbr.
 email=toni.schoenbuchner@csgis.de
 
 about=S2G Data Processor is a comprehensive QGIS extension that streamlines data preparation for Survey2GIS processing. It automates the workflow by validating and preparing input data, generating optimized Survey2GIS commands, executing transformations, and seamlessly importing the results into QGIS via GeoPackage format. Ideal for archaeologists and surveyors working with field data.
-tracker=http://bugs
-repository=http://repo
+tracker=https://github.com/survey2gis/s2g-qgis-extension/issues
+repository=https://github.com/survey2gis/s2g-qgis-extension
 # End of mandatory metadata
 
 # Recommended items:
@@ -22,13 +22,13 @@ hasProcessingProvider=no
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=python
+tags=python,survey2gis,Totalstation,Tachymeter
 
-homepage=http://homepage
+homepage=https://s2qgis-docs.survey-tools.org
 category=Plugins
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
