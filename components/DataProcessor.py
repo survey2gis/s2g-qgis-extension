@@ -97,8 +97,13 @@ class DataProcessor:
         # alias Input
         self.parent_widget.alias_file_select_button.clicked.connect(self.select_alias_file)
         self.parent_widget.alias_file_reset_button.clicked.connect(
-            lambda: self.reset_text_field(self.parent_widget.alias_file_input)
-        )
+            lambda: (
+                self.reset_text_field(self.parent_widget.alias_file_input),
+                self.alias_mapping.clear(),
+                self.logger.log_message(f"Reset self.alias_mapping to: {self.alias_mapping}", level="info", to_tab=False, to_gui=True, to_notification=False)
+            )
+        ) 
+
 
         self.parent_widget.add_command_button.clicked.connect(self.add_command)
         self.parent_widget.save_commands_button.clicked.connect(self.save_command_history)
@@ -167,7 +172,6 @@ class DataProcessor:
     def add_command(self):
         """Process the files using the survey2gis command line tool."""
         try:
-            # Check if any of the required fields are empty
             if (not self.parent_widget.process_input_file_input.text().strip() or
                 not self.parent_widget.select_parser_input.text().strip() or
                 not self.parent_widget.name_generated_file_input.text().strip()):
@@ -176,13 +180,13 @@ class DataProcessor:
 
             self.output_base_name = self.parent_widget.name_generated_file_input.text().strip()
             self.command_options = self.read_options()
-            command = self.build_command(self.parent_widget.process_input_file_input.text().strip())
+            command = self.build_command(
+                self.parent_widget.process_input_file_input.text().strip()
+            )
+            
             joined_command = " ".join(command)
-
             self.logger.log_message(joined_command, level="info", to_tab=False, to_gui=True, to_notification=False)
             self.parent_widget.command_code_field.append(joined_command)
-            
-            # Add this line to save the command history after appending the new command
             self.save_command_history()
 
         except FileNotFoundError as e:
@@ -228,18 +232,13 @@ class DataProcessor:
         """Build the command to execute survey2gis."""
         binary_path = self.parent_widget.get_binary_path()
         command = ['"'+binary_path+'"']
-        
-        # Add the base command options
         command.extend(self.parent_widget.command_options.to_command_list())
         
-        # Add each selection separately with -S format
         if hasattr(self.parent_widget.command_options, 'selections'):
             for selection in self.parent_widget.command_options.selections:
                 command.extend(['-S', selection])
         
-        # Add input file to the command
         command.append(generated_input_file)
-
         return command
 
     def process_selection_input(self, text):
@@ -275,23 +274,33 @@ class DataProcessor:
 
     def run_commands(self):
         """Get and run all commands from the command code field"""
-
         try:
-
-            # Get commands from the field and filter out empty lines
             commands = [cmd.strip() for cmd in self.parent_widget.command_code_field.toPlainText().split('\n') if cmd.strip()]
             
             if not commands:
                 self.logger.log_message("No commands found to execute", level="info", to_tab=True, to_gui=True, to_notification=True)
                 return
+
+            # Extract output directory from first valid command
+            parts = self._split_command(commands[0])
+            output_dir, _ = self._extract_output_and_basename(parts)
+            
+            if not output_dir:
+                self.logger.log_message("Could not determine output directory from commands", level="error", to_tab=True, to_gui=True, to_notification=True)
+                return
                 
             self.current_commands = commands
             self.current_command_index = 0
             
-            # Clear the output log before starting new command sequence
+            # Create logs directory
+            self.logs_dir = os.path.join(output_dir, 'logs')
+            print(f"Creating logs {self.logs_dir}")
+
+            os.makedirs(self.logs_dir, exist_ok=True)
+            
+            self.logger.log_message(f"Starting {len(commands)} command(s) please wait", level="info", to_tab=False, to_gui=False, to_notification=True)
             self.logger.log_message(f"\n{'='*50}Starting command sequence execution for {len(commands)} command(s)", level="info", to_tab=True, to_gui=True, to_notification=False)
 
-            # Start with the first command
             self.run_next_command()
             
         except Exception as e:
@@ -299,50 +308,35 @@ class DataProcessor:
 
 
     def run_next_command(self):
-        """Run the next command in the sequence or finish"""
-
         if self.current_command_index >= len(self.current_commands):
             self.logger.log_message("All commands survey2gis commands completed successfully", level="success", to_tab=True, to_gui=True, to_notification=True)
             self.load_survey_data()
             self.handle_file_cleanup()
             return
-            
+                
         command = self.current_commands[self.current_command_index]
         try:
-            # Properly handle the command string, respecting quoted paths
-            command_parts = []
-            current_part = ''
-            in_quotes = False
+            command_parts = self._split_command(command)
             
-            for char in command:
-                if char == '"':
-                    if in_quotes:
-                        if current_part:
-                            command_parts.append(current_part)
-                            current_part = ''
-                    in_quotes = not in_quotes
-                elif char == ' ' and not in_quotes:
-                    if current_part:
-                        command_parts.append(current_part)
-                        current_part = ''
-                else:
-                    current_part += char
-                    
-            if current_part:
-                command_parts.append(current_part)
-                
-            # Remove any empty parts
-            command_parts = [part for part in command_parts if part]
-            
+            # Find output base name from command (-n parameter)
+            for i, part in enumerate(command_parts):
+                if part == '-n' and i + 1 < len(command_parts):
+                    base_name = command_parts[i + 1].strip('"')
+                    self.log_file_path = os.path.join(self.logs_dir, f"{base_name}.log")
+                    break
+
+            # Add log file parameter if not already present
+            if '-l' not in command_parts and hasattr(self, 'log_file_path'):
+                command_parts.extend(['-l', self.log_file_path])
+
             log_output = f"\n{'='*50}"
             log_output += f"Executing command {self.current_command_index + 1}/{len(self.current_commands)}:\n"
-            log_output += command
+            log_output += " ".join(command_parts)  # Use modified command
             self.logger.log_message(log_output, level="info", to_tab=True, to_gui=True, to_notification=False)
 
-            # Store current command output for interpretation
             self.current_command_output = []
             self.run_process_sequential(command_parts)
-            
+                
         except Exception as e:
             self.logger.log_message(f"Error processing command: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
 
@@ -380,23 +374,27 @@ class DataProcessor:
         """Handle standard error from the current process."""
         data = self.process.readAllStandardError().data().decode()
         self.current_command_output.append(data)
-        self.logger.log_message(f"{data}", level="info", to_tab=True, to_gui=True, to_notification=False)
+        # self.logger.log_message(f"{data}", level="info", to_tab=True, to_gui=True, to_notification=False)
 
     def handle_process_finished_sequential(self, exit_code, exit_status):
-        """Handle the completion of a single process in the sequence."""
-        output_text = ''.join(self.current_command_output)
+        """Handle process completion and read log file"""
+        try:
+            log_content = ""
+            if os.path.exists(self.log_file_path):
+                with open(self.log_file_path, 'r') as f:
+                    log_content = f.read()
+                    self.logger.log_message(log_content, level="info", to_tab=True, to_gui=True, to_notification=False)
 
-        self.logger.log_message(f"Process finished with exit code: {exit_code}", level="info", to_tab=True, to_gui=True, to_notification=False)
-        self.logger.log_message(f"Process output: {output_text}", level="info", to_tab=True, to_gui=True, to_notification=False)
-
-        if exit_code == 0 and "ERROR" not in output_text:
-            self.logger.log_message(f"Command {self.current_command_index + 1} completed successfully", level="info", to_tab=True, to_gui=True, to_notification=False)
-
-            # Move to next command
-            self.current_command_index += 1
-            self.run_next_command()
-        else:
-            self._handle_command_failure(exit_code, output_text)
+            if exit_code == 0 and "ERROR" not in log_content:
+                self.logger.log_message(f"Command {self.current_command_index + 1} completed successfully", 
+                                    level="info", to_tab=True, to_gui=True, to_notification=False)
+                self.current_command_index += 1 
+                self.run_next_command()
+            else:
+                self._handle_command_failure(exit_code, log_content)
+                
+        except Exception as e:
+            self.logger.log_message(f"Error reading log file: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
 
     def _handle_command_failure(self, exit_code, output_text):
         """Handle the failure of a command."""
@@ -562,73 +560,6 @@ class DataProcessor:
             # Cleanup: Close the GeoPackage
             del out_ds
 
-    # def shapefiles_to_gpkg(self, files, out_ds, use_project_crs=True):
-    #     """
-    #     Add layers from GeoJSON/Shapefile files to a GeoPackage with renamed fields.
-        
-    #     Args:
-    #         files: List of files to process
-    #         out_ds: Output datasource
-    #         use_project_crs: If True, use project CRS, if False, create without CRS
-    #     """
-    #     created_layers = []
-        
-    #     # Get project CRS if needed
-    #     if use_project_crs:
-    #         project_crs = QgsProject.instance().crs()
-    #         srs = osr.SpatialReference()
-    #         auth_id = project_crs.authid()
-    #         if auth_id.startswith('EPSG:'):
-    #             epsg_code = int(auth_id.split(':')[1])
-    #             srs.ImportFromEPSG(epsg_code)
-    #             self.logger.log_message(f"Using project CRS: {project_crs.description()} ({auth_id})", 
-    #                                 level="info", to_tab=True, to_gui=True, to_notification=False)
-    #         else:
-    #             self.logger.log_message(f"Project CRS is not EPSG based. Creating without CRS.", 
-    #                                 level="warning", to_tab=True, to_gui=True, to_notification=True)
-    #             use_project_crs = False
-
-    #     for file in files:
-    #         ds = ogr.Open(file)
-    #         if ds is None:
-    #             self.logger.log_message(f"Could not open {file}", 
-    #                                 level="error", to_tab=True, to_gui=True, to_notification=True)
-    #             continue
-
-    #         lyr = ds.GetLayer()
-    #         layer_name = os.path.splitext(os.path.basename(file))[0]
-
-    #         # Create new layer with SRS if specified
-    #         new_layer_defn = self.get_renamed_layer_defn(lyr)
-    #         if use_project_crs:
-    #             new_layer = out_ds.CreateLayer(layer_name, srs, lyr.GetGeomType())
-    #             self.logger.log_message(f"Created layer {layer_name} with project CRS", 
-    #                                 level="info", to_tab=True, to_gui=False, to_notification=False)
-    #         else:
-    #             new_layer = out_ds.CreateLayer(layer_name, geom_type=lyr.GetGeomType())
-    #             self.logger.log_message(f"Created layer {layer_name} without CRS", 
-    #                                 level="info", to_tab=True, to_gui=False, to_notification=False)
-
-    #         # Add fields from new layer definition
-    #         for i in range(new_layer_defn.GetFieldCount()):
-    #             new_layer.CreateField(new_layer_defn.GetFieldDefn(i))
-
-    #         # Copy features
-    #         for feature in lyr:
-    #             new_feature = ogr.Feature(new_layer.GetLayerDefn())
-    #             for i in range(lyr.GetLayerDefn().GetFieldCount()):
-    #                 original_field_name = lyr.GetLayerDefn().GetFieldDefn(i).GetName()
-    #                 alias_field_name = self.alias_mapping.get(original_field_name, original_field_name)
-    #                 new_feature.SetField(alias_field_name, feature.GetField(original_field_name))
-
-    #             new_feature.SetGeometry(feature.GetGeometryRef())
-    #             new_layer.CreateFeature(new_feature)
-    #             new_feature = None
-
-    #         created_layers.append(layer_name)
-    #         ds = None
-
-    #     return created_layers
 
     def _get_crs_from_command(self, layer_name):
         """
@@ -974,6 +905,7 @@ class DataProcessor:
             # No need to call refresh directly - QGIS will handle this
             self.logger.log_message(f"Temporarily added SVG path for this session: {svg_path}", 
                                 level="info", to_tab=True, to_gui=True, to_notification=False)
+
 
     def restore_svg_paths(self):
         """Restore original SVG paths."""
