@@ -161,6 +161,7 @@ zip:
 	zip -9r "$(CURDIR)/s2g_data_processor.zip" "$(PLUGINNAME)" \
 		-x "$(PLUGINNAME)/.git/*" \
 		-x "$(PLUGINNAME)/.pytest_cache/*" \
+		-x "$(PLUGINNAME)/__pycache__/*" \
 		-x "$(PLUGINNAME)/_alias.txt" \
 		-x "$(PLUGINNAME)/.gitignore" \
 		-x "$(PLUGINNAME)/command_history.txt" \
