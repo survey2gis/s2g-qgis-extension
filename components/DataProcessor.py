@@ -69,6 +69,7 @@ class DataProcessor:
 
         self.connect_signals()
         self.load_command_history()
+        self.add_stop_on_errors_checkbox()
 
     def connect_signals(self):
         """Connect GUI elements to their respective methods."""
@@ -149,6 +150,27 @@ class DataProcessor:
             self.parent_widget.shape_output_path_input.setText(directory) 
             self.parent_widget.command_options.output_directory = directory 
 
+    def add_stop_on_errors_checkbox(self):
+        """Add checkbox for stopping on errors to the GUI."""
+        try:
+            # Create checkbox for stop on errors
+            self.stop_on_errors_checkbox = QtWidgets.QCheckBox("Stop on errors")
+            self.stop_on_errors_checkbox.setChecked(False)  # Default unchecked
+            
+            # Get groupBox_5 and its layout
+            group_box = self.parent_widget.groupBox_5
+            if group_box and group_box.layout():
+                # Add checkbox to the bottom of groupBox_5's layout
+                group_box.layout().addWidget(self.stop_on_errors_checkbox)
+                self.logger.log_message("Added stop on errors checkbox to groupBox_5", 
+                                    level="info", to_tab=True, to_gui=False, to_notification=False)
+            else:
+                self.logger.log_message("Could not find groupBox_5 or its layout", 
+                                    level="warning", to_tab=True, to_gui=True, to_notification=False)
+                        
+        except Exception as e:
+            self.logger.log_message(f"Error adding stop on errors checkbox: {e}", 
+                                level="error", to_tab=True, to_gui=True, to_notification=False)
  
     def validate_epsg_input(self):
         """Validate EPSG input when it changes."""
@@ -399,13 +421,17 @@ class DataProcessor:
     def _handle_command_failure(self, exit_code, output_text):
         """Handle the failure of a command."""
         error_message = (f"Command {self.current_command_index + 1} failed "
-                         f"with exit code {exit_code}")
+                        f"with exit code {exit_code}")
         if "ERROR" in output_text:
             error_message += f"\nError in survey2gis output detected"
 
         self.logger.log_message(error_message, level="error", to_tab=True, to_gui=True, to_notification=True)
-
-
+        
+        # Check if we should continue or stop based on checkbox state
+        if not hasattr(self, 'stop_on_errors_checkbox') or not self.stop_on_errors_checkbox.isChecked():
+            # If checkbox doesn't exist or is unchecked, continue with next command
+            self.current_command_index += 1
+            self.run_next_command()
 
     # => Save layer from source into geopackage
 

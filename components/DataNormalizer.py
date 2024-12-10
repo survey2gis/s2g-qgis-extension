@@ -51,7 +51,7 @@ class DataNormalizer:
             self.settings_persist_checkbox.setChecked(self.settings.value('s2g_normalize/persist_settings', False, type=bool))
             
             # Find the normalize tab's layout
-            normalize_tab = self.parent_widget.tabWidget.widget(0)  # Assuming Normalize is the first tab
+            normalize_tab = self.parent_widget.tabWidget.widget(0) 
             if hasattr(normalize_tab, 'layout'):
                 layout = normalize_tab.layout()
                 if layout:
