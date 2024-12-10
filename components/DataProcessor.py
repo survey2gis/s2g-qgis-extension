@@ -889,7 +889,7 @@ class DataProcessor:
         from qgis.core import QgsSettings
         settings = QgsSettings()
         
-        # Get existing SVG paths
+        # Get existing SVG paths that are visible in GUI
         svg_paths = settings.value("svg/searchPathsForSVG", [])
         if isinstance(svg_paths, str):
             svg_paths = [svg_paths]
@@ -898,14 +898,12 @@ class DataProcessor:
         if not hasattr(self, '_original_svg_paths'):
             self._original_svg_paths = svg_paths.copy()
         
-        # Add new path if it's not already in the list
+        # Add new path if not already in the list
         if svg_path not in svg_paths:
             svg_paths.append(svg_path)
             settings.setValue("svg/searchPathsForSVG", svg_paths)
-            # No need to call refresh directly - QGIS will handle this
-            self.logger.log_message(f"Temporarily added SVG path for this session: {svg_path}", 
+            self.logger.log_message(f"Temporarily added SVG path to settings: {svg_path}", 
                                 level="info", to_tab=True, to_gui=True, to_notification=False)
-
 
     def restore_svg_paths(self):
         """Restore original SVG paths."""
