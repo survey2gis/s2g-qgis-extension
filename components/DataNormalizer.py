@@ -26,6 +26,9 @@ class DataNormalizer:
             'standard_geotags_checkbox': ('s2g_normalize/standard_geotags_checkbox', False),
             'fix_lines_checkbox': ('s2g_normalize/fix_lines_checkbox', False),
             'cols_after_id_checkbox': ('s2g_normalize/cols_after_id_checkbox', False),
+            'search_character': ('s2g_normalize/search_character', ''),
+            'replace_character': ('s2g_normalize/replace_character', ''),
+            'epsg_input': ('s2g_normalize/epsg_input', ''),
         }
 
     def setup(self, parent_widget):
@@ -439,25 +442,58 @@ class DataNormalizer:
             self.logger.log_message("No SVG folder found in the styles folder.", 
                                 level="info", to_tab=True, to_gui=True, to_notification=False)
     def _replace_geotag_symbols(self, output_file_path):
-        """Replace & with $ in the specified output file."""
-        try:
-            # Read the contents of the file
-            with open(output_file_path, 'r', encoding='utf-8') as file:
-                content = file.read()
+            """
+            Replace characters in the specified output file based on search and replace inputs.
+            - If replace is empty: deletes the search string
+            - If no spaces: replaces entire search string with replace string
+            - If spaces present: replaces character by character where matches exist
+            """
+            try:
+                if not self.parent_widget.standard_geotags_checkbox.isChecked():
+                    return
 
-            # Replace & with $
-            updated_content = content.replace('&', '$')
+                search_char = self.parent_widget.search_character.text().strip()
+                if not search_char:  # No search character provided, do nothing
+                    return
 
-            # Write the updated content back to the file
-            with open(output_file_path, 'w', encoding='utf-8') as file:
-                file.write(updated_content)
+                replace_char = self.parent_widget.replace_character.text().strip()
+                
+                # Read the contents of the file
+                with open(output_file_path, 'r', encoding='utf-8') as file:
+                    content = file.read()
 
-            self.logger.log_message(f"Geotag symbols replaced in {output_file_path}", 
-                                level="info", to_tab=True, to_gui=True, to_notification=False)
+                updated_content = content
+                
+                # Case 1: Replace is empty -> delete search string
+                if not replace_char:
+                    updated_content = content.replace(search_char, '')
+                    
+                # Case 2: No spaces -> direct string replacement
+                elif ' ' not in search_char and ' ' not in replace_char:
+                    updated_content = content.replace(search_char, replace_char)
+                    
+                # Case 3: Spaces present -> character by character replacement
+                else:
+                    search_chars = search_char.split()
+                    replace_chars = replace_char.split()
+                    
+                    for i, char in enumerate(search_chars):
+                        if char and i < len(replace_chars):
+                            updated_content = updated_content.replace(char, replace_chars[i])
 
-        except Exception as e:
-            self.logger.log_message(f"Error updating geotag symbols: {e}", 
-                                level="error", to_tab=True, to_gui=True, to_notification=False)
+                # Write the updated content back to the file
+                with open(output_file_path, 'w', encoding='utf-8') as file:
+                    file.write(updated_content)
+
+                self.logger.log_message(
+                    f"Character replacement completed in {output_file_path}", 
+                    level="info", to_tab=True, to_gui=True, to_notification=False
+                )
+
+            except Exception as e:
+                self.logger.log_message(
+                    f"Error updating characters: {e}", 
+                    level="error", to_tab=True, to_gui=True, to_notification=True)
 
     def _fix_line_numbering(self, output_file_path):
         """Fix line numbering in the specified file."""

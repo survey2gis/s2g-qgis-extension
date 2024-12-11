@@ -229,21 +229,7 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="0">
-               <widget class="QCheckBox" name="cols_after_id_checkbox">
-                <property name="text">
-                 <string>Add column after IDs</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0" colspan="2">
-               <widget class="Line" name="line_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0" colspan="2">
+              <item row="11" column="0" colspan="2">
                <widget class="QLabel" name="label_14">
                 <property name="palette">
                  <palette>
@@ -287,7 +273,24 @@
                 </property>
                </widget>
               </item>
-              <item row="10" column="0" colspan="2">
+              <item row="4" column="0">
+               <widget class="QCheckBox" name="standard_geotags_checkbox">
+                <property name="text">
+                 <string>Replace Character</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="0">
+               <widget class="QCheckBox" name="cols_after_id_checkbox">
+                <property name="text">
+                 <string>Add column after IDs</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0" colspan="2">
                <widget class="QLineEdit" name="cols_after_ids_input">
                 <property name="text">
                  <string/>
@@ -297,7 +300,7 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
+              <item row="7" column="0">
                <widget class="QCheckBox" name="fix_lines_checkbox">
                 <property name="text">
                  <string>Fix line numbering</string>
@@ -307,10 +310,17 @@
                 </property>
                </widget>
               </item>
-              <item row="7" column="0" colspan="2">
-               <widget class="Line" name="line_3">
+              <item row="6" column="0" colspan="2">
+               <widget class="Line" name="line_2">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QCheckBox" name="copy_styles_checkbox">
+                <property name="text">
+                 <string>Copy styles</string>
                 </property>
                </widget>
               </item>
@@ -359,21 +369,40 @@
                 </layout>
                </widget>
               </item>
-              <item row="0" column="0">
-               <widget class="QCheckBox" name="copy_styles_checkbox">
-                <property name="text">
-                 <string>Copy styles</string>
+              <item row="9" column="0" colspan="2">
+               <widget class="Line" name="line_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QCheckBox" name="standard_geotags_checkbox">
-                <property name="text">
-                 <string>Standardize geotags</string>
+              <item row="5" column="0">
+               <widget class="QFrame" name="frame_3">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
+                 <item>
+                  <widget class="QLineEdit" name="search_character">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Search character (f.e. &amp;)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="replace_character">
+                   <property name="placeholderText">
+                    <string>Replace character (f.e. $)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -618,7 +647,7 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-495</y>
+             <y>0</y>
              <width>740</width>
              <height>1212</height>
             </rect>
@@ -791,7 +820,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-572</y>
                  <width>699</width>
                  <height>954</height>
                 </rect>
@@ -968,7 +997,7 @@
                    <item row="10" column="0">
                     <widget class="QLabel" name="label_3">
                      <property name="text">
-                      <string>-S, --selection </string>
+                      <string>-S, --selection (input divided by space generates several -s options)</string>
                      </property>
                     </widget>
                    </item>
@@ -1093,14 +1122,14 @@
                       <item>
                        <widget class="QLabel" name="label_9">
                         <property name="text">
-                         <string>decimal group input</string>
+                         <string>-g, decimal group input</string>
                         </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QLineEdit" name="decimal_group_input">
                         <property name="text">
-                         <string/>
+                         <string>,</string>
                         </property>
                         <property name="placeholderText">
                          <string>auto</string>
@@ -1110,14 +1139,14 @@
                       <item>
                        <widget class="QLabel" name="label_8">
                         <property name="text">
-                         <string>decimal point input</string>
+                         <string>-i, decimal point input</string>
                         </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QLineEdit" name="decimal_point_input">
                         <property name="text">
-                         <string/>
+                         <string>.</string>
                         </property>
                         <property name="placeholderText">
                          <string>auto</string>
