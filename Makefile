@@ -167,6 +167,23 @@ zip:
 		-x "$(PLUGINNAME)/command_history.txt" \
 		-x "$(PLUGINNAME)/survey2gis/*"
 
+zip-bin:
+	@echo
+	@echo "---------------------------"
+	@echo "Creating plugin zip bundle."
+	@echo "---------------------------"
+	# The zip target deploys the plugin and creates a zip file with the deployed
+	# content. You can then upload the zip file on http://plugins.qgis.org
+	rm -f $(PLUGINNAME).zip
+	cd "$(QGISDIR)" && \
+	zip -9r "$(CURDIR)/s2g_data_processor.zip" "$(PLUGINNAME)" \
+		-x "$(PLUGINNAME)/.git/*" \
+		-x "$(PLUGINNAME)/.pytest_cache/*" \
+		-x "$(PLUGINNAME)/__pycache__/*" \
+		-x "$(PLUGINNAME)/_alias.txt" \
+		-x "$(PLUGINNAME)/.gitignore" \
+		-x "$(PLUGINNAME)/command_history.txt"
+
 package: compile
 	# Create a zip package of the plugin named $(PLUGINNAME).zip.
 	# This requires use of git (your plugin development directory must be a
