@@ -29,8 +29,8 @@ class Survey2GISLogger:
             qgis_level = Qgis.Info
             log_level = logging.INFO
         if level == "success":
-            qgis_level = Qgis.Success
-            log_level = logging.SUCCESS
+            qgis_level = Qgis.Info
+            log_level = logging.INFO
         elif level == "warning":
             qgis_level = Qgis.Warning
             log_level = logging.WARNING
