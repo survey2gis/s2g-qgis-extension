@@ -109,7 +109,13 @@ class DataProcessor:
         self.parent_widget.save_commands_button.clicked.connect(self.save_command_history)
         self.parent_widget.run_commands_button.clicked.connect(self.run_commands)
 
+        # reest logs
+        self.parent_widget.reset_logs_button.clicked.connect(self.reset_logs)
+
     # => GUI Methods
+
+    def reset_logs(self):
+        self.parent_widget.output_log.setText("")
 
     def reset_text_field(self, field):
         field.setText("")
@@ -1003,7 +1009,8 @@ class DataProcessor:
         
         # Step 2: Check for the presence of `keep_files`
         keep_files_path = os.path.join(base_path, '..', 'keep_files')
-        self.logger.log_message(self.intermediate_file_dict, to_tab=True, to_gui=True, to_notification=False)
+        self.logger.log_message("\n----- cleanup tmp Files -----", to_tab=True, to_gui=False, to_notification=False)
+        self.logger.log_message(self.intermediate_file_dict, to_tab=True, to_gui=False, to_notification=False)
 
         # Step 3: If `keep_files` does not exist, delete files listed in the dictionary
         if not os.path.exists(keep_files_path):
@@ -1018,7 +1025,7 @@ class DataProcessor:
                             self._delete_single_file(file_path)
         else:
             self.logger.log_message(f"keep_files file found, skipping deletion.", 
-                                level="info", to_tab=True, to_gui=True, to_notification=False)
+                                level="info", to_tab=True, to_gui=False, to_notification=False)
 
     def _delete_shapefile_set(self, shp_path):
         """Delete a shapefile and all its associated files."""
@@ -1036,7 +1043,7 @@ class DataProcessor:
             if os.path.exists(file_path):
                 os.remove(file_path)
                 self.logger.log_message(f"Deleted: {file_path}", 
-                                    level="info", to_tab=True, to_gui=True, to_notification=False)
+                                    level="info", to_tab=True, to_gui=False, to_notification=False)
             else:
                 pass
                 # self.logger.log_message(f"File not found, could not delete: {file_path}", 

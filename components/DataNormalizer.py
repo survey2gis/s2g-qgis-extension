@@ -9,13 +9,16 @@ FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), '..', "s2g_data_processor_dockwidget_base.ui")
 )
 
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import QSettings
+
 class DataNormalizer:
     def __init__(self):
         self.parent_widget = None
         self.logger = None
-        # Change settings to be more explicit with organization and application name
         self.settings = QSettings('CSGIS', 'Survey2GIS_DataProcessor')
         
+        # Define saveable fields with their settings keys and default values
         self.saveable_fields = {
             'input_select': ('s2g_normalize/input_select', ''),
             'output_select_input': ('s2g_normalize/output_select_input', ''),
@@ -28,7 +31,7 @@ class DataNormalizer:
             'cols_after_id_checkbox': ('s2g_normalize/cols_after_id_checkbox', False),
             'search_character': ('s2g_normalize/search_character', ''),
             'replace_character': ('s2g_normalize/replace_character', ''),
-            'epsg_input': ('s2g_normalize/epsg_input', ''),
+            'epsg_input': ('s2g_normalize/epsg_input', '')
         }
 
     def setup(self, parent_widget):
@@ -36,186 +39,161 @@ class DataNormalizer:
         self.parent_widget = parent_widget
         self.logger = Survey2GISLogger(parent_widget)
         
-        # Connect signals first
+        # Setup UI and settings in proper order
+        self._setup_settings_management()
         self.connect_signals()
         
-        # Add settings checkbox to GUI
-        self.add_settings_persistence_checkbox()
-        
-        # Load settings after GUI is fully set up
-        QtWidgets.QApplication.processEvents()  # Let the GUI finish updating
-        self.load_settings()
+        # Only load settings if persistence is enabled
+        if self.parent_widget.save_settings_checkbox.isChecked():
+            self._load_persisted_settings()
 
-    def add_settings_persistence_checkbox(self):
-        """Add checkbox for settings persistence to the GUI."""
+    def _setup_settings_management(self):
+        """Setup settings persistence checkbox and load its state."""
         try:
-            # Create checkbox for settings persistence
-            self.settings_persist_checkbox = QtWidgets.QCheckBox("Save settings for next session")
-            self.settings_persist_checkbox.setChecked(self.settings.value('s2g_normalize/persist_settings', False, type=bool))
+            # Initialize checkbox with saved state
+            self.parent_widget.save_settings_checkbox.setChecked(
+                self.settings.value('s2g_normalize/persist_settings', False, type=bool)
+            )
             
-            # Find the normalize tab's layout
-            normalize_tab = self.parent_widget.tabWidget.widget(0) 
-            if hasattr(normalize_tab, 'layout'):
-                layout = normalize_tab.layout()
-                if layout:
-                    # Add checkbox to the bottom of the layout
-                    layout.addWidget(self.settings_persist_checkbox)
-                    
-                    # Connect checkbox state change
-                    self.settings_persist_checkbox.stateChanged.connect(self.on_settings_persistence_changed)
-            
+            # Connect state change handler
+            self.parent_widget.save_settings_checkbox.stateChanged.connect(
+                self._handle_settings_persistence_change
+            )
         except Exception as e:
-            self.logger.log_message(f"Error adding settings persistence checkbox: {e}", 
-                                  level="error", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(
+                f"Error setting up settings management: {e}", 
+                level="error", to_tab=True, to_gui=True, to_notification=False
+            )
 
-    def on_settings_persistence_changed(self, state):
-        """Handle changes to the settings persistence checkbox."""
-        self.settings.setValue('s2g_normalize/persist_settings', bool(state))
-        if state:
-            # If enabled, immediately save current values
-            self.save_settings()
-        else:
-            # If unchecked, clear all saved settings
-            self.clear_settings()
+    def _handle_settings_persistence_change(self, state):
+        """Handle changes to settings persistence state."""
+        is_enabled = bool(state)
+        self.settings.setValue('s2g_normalize/persist_settings', is_enabled)
         
-        # Force settings to be written to disk
+        if is_enabled:
+            self._save_current_settings()
+        else:
+            self._clear_persisted_settings()
+            
         self.settings.sync()
 
-    def save_settings(self):
-        """Save current widget values to settings if persistence is enabled."""
-        if not hasattr(self, 'settings_persist_checkbox') or not self.settings_persist_checkbox.isChecked():
+    def _save_current_settings(self):
+        """Save current widget values if persistence is enabled."""
+        if not self.parent_widget.save_settings_checkbox.isChecked():
             return
 
         try:
-            # Begin a settings group to keep all settings together
-            self.settings.beginGroup('s2g_normalize')
-            
-            # Save persistence setting
-            self.settings.setValue('persist_settings', True)
-            
-            # Save all values in a single transaction
             for widget_name, (setting_key, _) in self.saveable_fields.items():
                 widget = getattr(self.parent_widget, widget_name)
+                value = self._get_widget_value(widget)
                 
-                if isinstance(widget, QtWidgets.QLineEdit):
-                    value = widget.text()
-                    # Save with explicit type hint
-                    self.settings.setValue(setting_key.replace('s2g_normalize/', ''), str(value))
-                    self.logger.log_message(f"Saved {setting_key}: '{value}'", 
-                                        level="info", to_tab=True, to_gui=False, to_notification=False)
-                
-                elif isinstance(widget, QtWidgets.QCheckBox):
-                    value = widget.isChecked()
-                    # Save with explicit type hint
-                    self.settings.setValue(setting_key.replace('s2g_normalize/', ''), bool(value))
-                    self.logger.log_message(f"Saved {setting_key}: {value}", 
-                                        level="info", to_tab=True, to_gui=False, to_notification=False)
+                if value is not None:
+                    self.settings.setValue(setting_key, value)
             
-            # End the settings group
-            self.settings.endGroup()
-            
-            # Force write to disk
             self.settings.sync()
-
-        except Exception as e:
-            self.logger.log_message(f"Error saving settings: {str(e)}", 
-                                level="error", to_tab=True, to_gui=True, to_notification=False)
-
-    def load_settings(self):
-        """Load saved settings if persistence is enabled."""
-        try:
-            # Begin reading from the settings group
-            self.settings.beginGroup('s2g_normalize')
-            
-            # Check if persistence is enabled
-            persist_enabled = self.settings.value('persist_settings', False, type=bool)
-            
-            if not persist_enabled:
-                self.settings.endGroup()
-                return
                 
-            # Debug current settings state
-            self.logger.log_message("Current settings values:", 
-                                level="info", to_tab=True, to_gui=True, to_notification=False)
-            
-            for key in self.settings.childKeys():
-                value = self.settings.value(key)
-                self.logger.log_message(f"Found setting: {key} = {value}", 
-                                    level="info", to_tab=True, to_gui=True, to_notification=False)
-            
-            # Load all values
-            for widget_name, (setting_key, default_value) in self.saveable_fields.items():
-                try:
-                    widget = getattr(self.parent_widget, widget_name)
-                    key = setting_key.replace('s2g_normalize/', '')
-                    
-                    if isinstance(widget, QtWidgets.QLineEdit):
-                        value = self.settings.value(key, default_value, type=str)
-                        if value is not None:
-                            widget.setText(value)
-                            self.logger.log_message(f"Loaded QLineEdit {widget_name}: '{value}'", 
-                                                level="info", to_tab=True, to_gui=True, to_notification=False)
-                    
-                    elif isinstance(widget, QtWidgets.QCheckBox):
-                        value = self.settings.value(key, default_value, type=bool)
-                        widget.setChecked(value)
-                        self.logger.log_message(f"Loaded QCheckBox {widget_name}: {value}", 
-                                            level="info", to_tab=True, to_gui=True, to_notification=False)
-                    
-                except Exception as widget_error:
-                    self.logger.log_message(f"Error loading widget {widget_name}: {str(widget_error)}", 
-                                        level="error", to_tab=True, to_gui=True, to_notification=False)
-            
-            # End reading from the settings group
-            self.settings.endGroup()
-
         except Exception as e:
-            self.logger.log_message(f"Error loading settings: {str(e)}", 
-                                level="error", to_tab=True, to_gui=True, to_notification=True)
-            self.settings.endGroup()
+            self.logger.log_message(
+                f"Error saving settings: {str(e)}", 
+                level="error", to_tab=True, to_gui=True, to_notification=False
+            )
 
+    def _load_persisted_settings(self):
+        """Load saved settings into widgets."""
+        try:
+            for widget_name, (setting_key, default_value) in self.saveable_fields.items():
+                widget = getattr(self.parent_widget, widget_name)
+                saved_value = self.settings.value(setting_key, default_value)
+                
+                self._set_widget_value(widget, saved_value)
+                
+        except Exception as e:
+            self.logger.log_message(
+                f"Error loading settings: {str(e)}", 
+                level="error", to_tab=True, to_gui=True, to_notification=False
+            )
 
-    def clear_settings(self):
+    def _clear_persisted_settings(self):
         """Clear all saved settings."""
         try:
-            self.settings.beginGroup('normalize')
-            self.settings.remove('')  # Remove all settings in the group
+            self.settings.beginGroup('s2g_normalize')
+            self.settings.remove('')
             self.settings.endGroup()
             self.settings.sync()
-            self.logger.log_message("Settings cleared successfully", 
-                                level="info", to_tab=True, to_gui=False, to_notification=False)
         except Exception as e:
-            self.logger.log_message(f"Error clearing settings: {str(e)}", 
-                                level="error", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(
+                f"Error clearing settings: {str(e)}", 
+                level="error", to_tab=True, to_gui=True, to_notification=False
+            )
+
+    def _get_widget_value(self, widget):
+        """Get the current value from a widget based on its type."""
+        if isinstance(widget, QtWidgets.QLineEdit):
+            return widget.text()
+        elif isinstance(widget, QtWidgets.QCheckBox):
+            return widget.isChecked()
+        return None
+
+    def _set_widget_value(self, widget, value):
+        """Set a widget's value based on its type."""
+        if isinstance(widget, QtWidgets.QLineEdit):
+            widget.setText(str(value))
+        elif isinstance(widget, QtWidgets.QCheckBox):
+            widget.setChecked(bool(value))
 
     def connect_signals(self):
-        """Connect all GUI signals and add autosave functionality."""
+        """Connect GUI signals including autosave."""
         if not self.parent_widget:
             return
 
-        # Connect existing signals
-        self.parent_widget.input_select_button.clicked.connect(self.select_input_files)
-        self.parent_widget.input_data_reset_button.clicked.connect(
-            lambda: self.reset_text_field(self.parent_widget.input_select)
-        )
-        self.parent_widget.output_select_button.clicked.connect(self.select_output_directory)
-        self.parent_widget.output_reset_button.clicked.connect(
-            lambda: self.reset_text_field(self.parent_widget.output_select_input)
-        )
-        self.parent_widget.output_filename_input.textChanged.connect(self.validate_filename_input)
-        self.parent_widget.styles_input_select_button.clicked.connect(self.select_styles_input_directory)
-        self.parent_widget.styles_reset_button.clicked.connect(
-            lambda: self.reset_text_field(self.parent_widget.styles_folder_path_input)
-        )
-        self.parent_widget.run_button.clicked.connect(self.run_normalize)
+        # Connect main UI signals
+        button_connections = {
+            'input_select_button': (self.select_input_files, None),
+            'input_data_reset_button': (lambda: self.reset_text_field(self.parent_widget.input_select), None),
+            'output_select_button': (self.select_output_directory, None),
+            'output_reset_button': (lambda: self.reset_text_field(self.parent_widget.output_select_input), None),
+            'styles_input_select_button': (self.select_styles_input_directory, None),
+            'styles_reset_button': (lambda: self.reset_text_field(self.parent_widget.styles_folder_path_input), None),
+            'run_button': (self.run_normalize, None)
+        }
 
-        # Connect autosave for all saveable widgets
+        # Connect all button signals
+        for button_name, (slot, args) in button_connections.items():
+            button = getattr(self.parent_widget, button_name)
+            if args:
+                button.clicked.connect(lambda checked, a=args: slot(*a))
+            else:
+                button.clicked.connect(slot)
+
+        # Connect text validation signals
+        self.parent_widget.output_filename_input.textChanged.connect(self.validate_filename_input)
+
+        # Connect all saveable widgets for autosave
+        def create_save_handler(widget_name):
+            def save_handler(*args):
+                if self.parent_widget.save_settings_checkbox.isChecked():
+                    widget = getattr(self.parent_widget, widget_name)
+                    if isinstance(widget, QtWidgets.QLineEdit):
+                        value = widget.text()
+                    elif isinstance(widget, QtWidgets.QCheckBox):
+                        value = widget.isChecked()
+                    else:
+                        return
+                    
+                    setting_key = self.saveable_fields[widget_name][0]
+                    self.settings.setValue(setting_key, value)
+                    self.settings.sync()
+            return save_handler
+
+        # Connect each widget with its own save handler
         for widget_name in self.saveable_fields:
             widget = getattr(self.parent_widget, widget_name)
+            save_handler = create_save_handler(widget_name)
+            
             if isinstance(widget, QtWidgets.QLineEdit):
-                widget.textChanged.connect(self.save_settings)
+                widget.textChanged.connect(save_handler)
             elif isinstance(widget, QtWidgets.QCheckBox):
-                widget.stateChanged.connect(self.save_settings)
+                widget.stateChanged.connect(save_handler)
 
     def select_input_files(self):
             """Open file dialog to select multiple input files and display in input_select field."""
