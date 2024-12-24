@@ -109,14 +109,9 @@ class DataProcessor:
         self.parent_widget.save_commands_button.clicked.connect(self.save_command_history)
         self.parent_widget.run_commands_button.clicked.connect(self.run_commands)
 
-        # reest logs
-        self.parent_widget.reset_logs_button.clicked.connect(self.reset_logs)
+
 
     # => GUI Methods
-
-    def reset_logs(self):
-        self.parent_widget.output_log.setText("")
-
     def reset_text_field(self, field):
         field.setText("")
 

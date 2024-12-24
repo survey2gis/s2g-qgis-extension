@@ -17,6 +17,7 @@ logger.setLevel(logging.DEBUG)
 
 from .components.DataNormalizer import DataNormalizer
 from .components.DataProcessor import DataProcessor
+from .components.LogTab import LogTab
 
 @dataclass
 class CommandOptions:
@@ -63,6 +64,7 @@ class S2gDataProcessorDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.data_normalizer.setup(self)
         
         self.data_processor = DataProcessor(self)
+        self.log_tab = LogTab(self)
     
         self.user_manual.clicked.connect(
             lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/user-attachments/files/16010974/english.pdf"))
