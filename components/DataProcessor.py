@@ -300,7 +300,7 @@ class DataProcessor:
             os.makedirs(self.logs_dir, exist_ok=True)
             
             self.logger.log_message(f"Starting {len(commands)} command(s) please wait", level="info", to_tab=False, to_gui=False, to_notification=True)
-            self.logger.log_message(f"\n{'='*50}Starting command sequence execution for {len(commands)} command(s)", level="info", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"\n{'='*3}\nStarting command sequence execution for {len(commands)} command(s)", level="info", to_tab=True, to_gui=True, to_notification=False)
 
             self.run_next_command()
             
@@ -310,7 +310,7 @@ class DataProcessor:
 
     def run_next_command(self):
         if self.current_command_index >= len(self.current_commands):
-            self.logger.log_message("All commands survey2gis commands completed successfully", level="success", to_tab=True, to_gui=True, to_notification=True)
+            self.logger.log_message(f"\n{'='*3}\nAll survey2gis commands finished\n{'='*3}", level="success", to_tab=True, to_gui=True, to_notification=True)
             self.load_survey_data()
             self.handle_file_cleanup()
             return
@@ -330,9 +330,10 @@ class DataProcessor:
             if '-l' not in command_parts and hasattr(self, 'log_file_path'):
                 command_parts.extend(['-l', self.log_file_path])
 
-            log_output = f"\n{'='*50}"
-            log_output += f"Executing command {self.current_command_index + 1}/{len(self.current_commands)}:\n"
-            log_output += " ".join(command_parts)  # Use modified command
+            log_output = f"{'=-'*3}\n"
+            log_output += f"<b>Executing command {self.current_command_index + 1}/{len(self.current_commands)}:</b>\n"
+            log_output += " ".join(command_parts)
+            log_output = f"{'='*3}\n"
             self.logger.log_message(log_output, level="info", to_tab=True, to_gui=True, to_notification=False)
 
             self.current_command_output = []
@@ -345,25 +346,36 @@ class DataProcessor:
         """Run a single process and handle its completion."""
         try:
             self.process = QtCore.QProcess(self.parent_widget)
-
+            
+            # Initialize timeout tracking
+            self.last_output_time = datetime.now()
+            self.timeout_timer = QtCore.QTimer()
+            self.timeout_timer.setInterval(60000)  # 60 seconds
+            self.timeout_timer.timeout.connect(self._check_process_activity)
+            
             # Connect signals
             self.process.readyReadStandardOutput.connect(self.handle_stdout_sequential)
             self.process.readyReadStandardError.connect(self.handle_stderr_sequential)
             self.process.finished.connect(self.handle_process_finished_sequential)
 
-            # Extract the program path and arguments
+            # Start process and timer
             program = command_parts[0]
             arguments = command_parts[1:]
-
-            # Start the process
             self.process.start(program, arguments)
-
-            # Wait for process to start
-            if not self.process.waitForStarted(3000):  # 3 second timeout
-                raise Exception("Process failed to start within timeout period")
+            self.timeout_timer.start()
 
         except Exception as e:
-            self.logger.log_message(f"Failed to start process: {e}", level="error", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"Failed to start process: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
+
+    def _check_process_activity(self):
+        """Check if process has been inactive for too long."""
+        idle_time = (datetime.now() - self.last_output_time).total_seconds()
+        if idle_time > 60:
+            self.logger.log_message(f"Process inactive for {int(idle_time)} seconds - terminating", 
+                                level="error", to_tab=True, to_gui=True, to_notification=True)
+            self.timeout_timer.stop()
+            self.process.kill()
+            self._handle_command_failure(-1, "Process terminated due to inactivity")
 
     def handle_stdout_sequential(self):
         """Handle standard output from the current process."""
@@ -378,6 +390,8 @@ class DataProcessor:
         # self.logger.log_message(f"{data}", level="info", to_tab=True, to_gui=True, to_notification=False)
 
     def handle_process_finished_sequential(self, exit_code, exit_status):
+        self.timeout_timer.stop()  # Stop the timer when process finishes normally
+
         """Handle process completion and read log file"""
         try:
             log_content = ""
@@ -387,7 +401,7 @@ class DataProcessor:
                     self.logger.log_message(log_content, level="info", to_tab=True, to_gui=True, to_notification=False)
 
             if exit_code == 0 and "ERROR" not in log_content:
-                self.logger.log_message(f"Command {self.current_command_index + 1} completed successfully", 
+                self.logger.log_message(f"Command {self.current_command_index + 1} completed", 
                                     level="info", to_tab=True, to_gui=True, to_notification=False)
                 self.current_command_index += 1 
                 self.run_next_command()
@@ -419,14 +433,14 @@ class DataProcessor:
         Load supported survey data formats (shapefiles) and save them to a single GeoPackage.
         """
         try:
-            self.logger.log_message(f"\n{'='*50} Starting load_survey_data function (convert to geopackage + load to QGIS) \n{'='*50}", level="info", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"\n{'='*3}\nStarting  convert to geopackage + load to QGIS \n{'='*3}", level="info", to_tab=True, to_gui=True, to_notification=False)
 
             # Get all commands from the command code field
             commands = [cmd.strip() for cmd in self.parent_widget.command_code_field.toPlainText().split('\n') if cmd.strip()]
-            self.logger.log_message(f"Found {len(commands)} commands to process", level="info", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"Found {len(commands)} commands to process\n{'='*3}", level="info", to_tab=True, to_gui=True, to_notification=False)
 
             if not commands:
-                self.logger.log_message("No commands found to process", level="error", to_tab=True, to_gui=True, to_notification=False)
+                self.logger.log_message("No commands found to process\n{'='*30}", level="error", to_tab=True, to_gui=True, to_notification=False)
                 return
 
             root = QgsProject.instance().layerTreeRoot()
@@ -440,8 +454,8 @@ class DataProcessor:
             gpkg_path = None   # GeoPackage path will be defined when we know output_dir
 
             for command_index, command in enumerate(commands):
-                self.logger.log_message(f"\nProcessing command {command_index + 1}/{len(commands)}", level="info", to_tab=True, to_gui=True, to_notification=False)
-                self.logger.log_message(f"Command: {command}", level="info", to_tab=True, to_gui=True, to_notification=False)
+                self.logger.log_message(f"\nProcessing command {command_index + 1}/{len(commands)}:", level="info", to_tab=True, to_gui=True, to_notification=False)
+                self.logger.log_message(f"{command}", level="info", to_tab=True, to_gui=True, to_notification=False)
 
                 # Split the command while preserving quoted strings
                 parts = self._split_command(command)
@@ -863,9 +877,6 @@ class DataProcessor:
                 level="warning", to_tab=True, to_gui=True, to_notification=True
             )
         
-        self.logger.log_message(f"new layer", 
-                            level="info", to_tab=True, to_gui=True, to_notification=False)
-
         self.logger.log_message(new_layer.crs().authid(), 
                             level="info", to_tab=True, to_gui=True, to_notification=False)
 
@@ -989,7 +1000,7 @@ class DataProcessor:
                     content = f.read()
                     if content.strip():  # Check if file has non-whitespace content
                         self.parent_widget.command_code_field.setPlainText(content)
-                        self.logger.log_message(f"Command history loaded from {self.command_history_file}", level="info", to_tab=True, to_gui=True, to_notification=False)
+                        self.logger.log_message(f"Command history loaded from {self.command_history_file}", level="info", to_tab=False, to_gui=True, to_notification=False)
 
         except Exception as e:
             self.logger.log_message(f"Error loading command history: {e}", level="error", to_tab=True, to_gui=True, to_notification=False)
