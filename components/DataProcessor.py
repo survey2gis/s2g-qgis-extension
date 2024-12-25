@@ -104,7 +104,6 @@ class DataProcessor:
             )
         ) 
 
-
         self.parent_widget.add_command_button.clicked.connect(self.add_command)
         self.parent_widget.save_commands_button.clicked.connect(self.save_command_history)
         self.parent_widget.run_commands_button.clicked.connect(self.run_commands)
@@ -264,7 +263,6 @@ class DataProcessor:
             else:
                 current_item.append(char)
         
-        # Don't forget the last item
         if current_item:
             selections.append('"' + ''.join(current_item) + '"')
 
@@ -420,8 +418,6 @@ class DataProcessor:
                 error_message += f"\nError in survey2gis output detected"
 
             self.logger.log_message(error_message, level="error", to_tab=True, to_gui=True, to_notification=True)
-        
-        # Check if we should continue or stop based on checkbox state
         else:
             self.current_command_index += 1
             self.run_next_command()
@@ -445,9 +441,6 @@ class DataProcessor:
 
             root = QgsProject.instance().layerTreeRoot()
             processed_basenames = set()
-
-            # Initialize a list to hold all layers across multiple basenames
-            all_shape_layers = []
 
             # Use a single GeoPackage file for all layers
             output_dir = None  # We'll update this as we extract it from commands
@@ -483,8 +476,7 @@ class DataProcessor:
                 processed_basenames.add(basename)
 
             
-
-            # # Save all layers (from all basenames) to a single GeoPackage if any were loaded
+            # => Save all layers (from all basenames) to a single GeoPackage if any were loaded
  
             all = self.scan_directory_for_spatialfiles(current_output_dir)
             self.logger.log_message(f"Created files are {str(all)}", level="info", to_tab=True, to_gui=False, to_notification=False)
@@ -503,7 +495,7 @@ class DataProcessor:
             'shp': {}
         }
 
-        # Compile regex to match the keywords polygon, point, or line (case-insensitive)
+        # Compile regex to match the keywords polygon, point, label or line (case-insensitive)
         keyword_pattern = re.compile(r'(poly|point|line|labels)', re.IGNORECASE)
 
         # Define valid file extensions
@@ -519,7 +511,6 @@ class DataProcessor:
                         file_lower = file.lower()
                         # Split the filename after the first underscore
                         prefix = file.split('_', 1)[0]
-                        
                         # Determine the file type ('shp')
                         file_type = 'shp'
                         
@@ -560,9 +551,7 @@ class DataProcessor:
             self.logger.log_message(f"geopackage exists: {output_gpkg}", level="info", to_tab=True, to_gui=False, to_notification=False)
 
             # os.remove(output_gpkg)  # Remove existing file if present
-
             group_name = "My Merged Data"
-            # Iterate over the dictionary
             self.logger.log_message(f"{str(data.items())}", level="info", to_tab=True, to_gui=False, to_notification=False)
 
             for file_type, groups in data.items():
@@ -570,7 +559,6 @@ class DataProcessor:
                     self.logger.log_message(f"Processing Group: {group}", level="info", to_tab=True, to_gui=False, to_notification=False)
                     self.logger.log_message(f"list is {file_list}", level="info", to_tab=True, to_gui=False, to_notification=False)
 
-                    group_name = group
                     # Pass the open GeoPackage data source (out_ds) to the function
                     self.shapefiles_to_gpkg(file_list, out_ds)
 
@@ -927,7 +915,6 @@ class DataProcessor:
             from qgis.core import QgsSettings
             settings = QgsSettings()
             settings.setValue("svg/searchPathsForSVG", self._original_svg_paths)
-            # No need to call refresh directly - QGIS will handle this
             self.logger.log_message("Restored original SVG paths", 
                                 level="info", to_tab=True, to_gui=True, to_notification=False)
 
@@ -998,7 +985,7 @@ class DataProcessor:
             if os.path.exists(self.command_history_file):
                 with open(self.command_history_file, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    if content.strip():  # Check if file has non-whitespace content
+                    if content.strip():
                         self.parent_widget.command_code_field.setPlainText(content)
                         self.logger.log_message(f"Command history loaded from {self.command_history_file}", level="info", to_tab=False, to_gui=True, to_notification=False)
 
