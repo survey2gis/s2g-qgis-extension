@@ -7,7 +7,7 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsPointXY, QgsRectangle
 
 from .. s2g_logging import Survey2GISLogger
 import os
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsSettings
 import re
 import fnmatch
 import configparser
@@ -111,7 +111,7 @@ class DataProcessor:
 
 
 
-    # => GUI Methods
+    # \n=> GUI Methods
     def reset_text_field(self, field):
         field.setText("")
 
@@ -168,7 +168,7 @@ class DataProcessor:
             self.parent_widget.epsg_input.setStyleSheet("")
         return False
 
-    # => Command generation methods
+    # \n=> Command generation methods
 
     def add_command(self):
         """Process the files using the survey2gis command line tool."""
@@ -271,7 +271,7 @@ class DataProcessor:
         return selections
 
 
-    # => run s2g commands
+    # \n=> run s2g commands
 
     def run_commands(self):
         """Get and run all commands from the command code field"""
@@ -426,18 +426,18 @@ class DataProcessor:
             self.current_command_index += 1
             self.run_next_command()
 
-    # => Save layer from source into geopackage
+    # \n=> Save layer from source into geopackage
 
     def load_survey_data(self):
         """
         Load supported survey data formats (shapefiles) and save them to a single GeoPackage.
         """
         try:
-            self.logger.log_message(f"\n{'='*3}\nStarting  convert to geopackage + load to QGIS \n{'='*3}", level="info", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"\n{'='*3}\nStarting  convert to geopackage", level="info", to_tab=True, to_gui=True, to_notification=False)
 
             # Get all commands from the command code field
             commands = [cmd.strip() for cmd in self.parent_widget.command_code_field.toPlainText().split('\n') if cmd.strip()]
-            self.logger.log_message(f"Found {len(commands)} commands to process\n{'='*3}", level="info", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"Found {len(commands)} commands to process\n{'='*3}\n", level="info", to_tab=True, to_gui=True, to_notification=False)
 
             if not commands:
                 self.logger.log_message("No commands found to process\n{'='*30}", level="error", to_tab=True, to_gui=True, to_notification=False)
@@ -454,8 +454,8 @@ class DataProcessor:
             gpkg_path = None   # GeoPackage path will be defined when we know output_dir
 
             for command_index, command in enumerate(commands):
-                self.logger.log_message(f"\nProcessing command {command_index + 1}/{len(commands)}:", level="info", to_tab=True, to_gui=True, to_notification=False)
-                self.logger.log_message(f"{command}", level="info", to_tab=True, to_gui=True, to_notification=False)
+                self.logger.log_message(f"Processing command {command_index + 1}/{len(commands)}\n", level="info", to_tab=True, to_gui=True, to_notification=False)
+                self.logger.log_message(f"{command}\n", level="info", to_tab=True, to_gui=True, to_notification=False)
 
                 # Split the command while preserving quoted strings
                 parts = self._split_command(command)
@@ -599,7 +599,7 @@ class DataProcessor:
                         srs = osr.SpatialReference()
                         srs.ImportFromEPSG(epsg_code)
                         self.logger.log_message(
-                            f"Using CRS from command line --proj-out for {layer_name}: EPSG:{epsg_code}", 
+                            f"- Using CRS from command line --proj-out for {layer_name}: EPSG:{epsg_code}", 
                             level="info", to_tab=True, to_gui=True, to_notification=False
                         )
                         return srs, epsg_code
@@ -617,7 +617,7 @@ class DataProcessor:
         Checks CRS sources in order: command line, epsg_input field.
         """
         created_layers = []
-        
+
         for file in files:
             ds = ogr.Open(file)
             if ds is None:
@@ -642,12 +642,12 @@ class DataProcessor:
                         srs = osr.SpatialReference()
                         srs.ImportFromEPSG(epsg_code)
                         self.logger.log_message(
-                            f"Using CRS from EPSG input for {layer_name}: EPSG:{epsg_code}", 
+                            f"- Using CRS from EPSG input for {layer_name}: EPSG:{epsg_code}", 
                             level="info", to_tab=True, to_gui=True, to_notification=False
                         )
                     except (ValueError, TypeError) as e:
                         self.logger.log_message(
-                            f"Invalid EPSG code in input: {epsg_text}", 
+                            f"- Invalid EPSG code in input: {epsg_text}", 
                             level="warning", to_tab=True, to_gui=True, to_notification=True
                         )
 
@@ -656,13 +656,13 @@ class DataProcessor:
             if srs:
                 new_layer = out_ds.CreateLayer(layer_name, srs, lyr.GetGeomType())
                 self.logger.log_message(
-                    f"Created layer {layer_name} with CRS EPSG:{epsg_code}", 
+                    f"- Created layer {layer_name} with CRS EPSG:{epsg_code}", 
                     level="info", to_tab=True, to_gui=False, to_notification=False
                 )
             else:
                 new_layer = out_ds.CreateLayer(layer_name, geom_type=lyr.GetGeomType())
                 self.logger.log_message(
-                    f"Created layer {layer_name} without CRS", 
+                    f"- Created layer {layer_name} without CRS", 
                     level="info", to_tab=True, to_gui=False, to_notification=False
                 )
 
@@ -741,7 +741,8 @@ class DataProcessor:
         """Main function to add layers from GeoPackage with styling."""
         conn = None
         has_svg_dir = False
-        
+
+        self.logger.log_message(f"\n{'='*3}\nAdd Layer from geopackage to qgis\n{'='*3}", level="info", to_tab=True, to_gui=True, to_notification=False)
         try:
             conn = self._open_geopackage(gpkg_path)
             if not conn:
@@ -812,7 +813,7 @@ class DataProcessor:
         auth_code = ogr_srs.GetAuthorityCode(None)
         
         if auth_name and auth_code:
-            self.logger.log_message(f"Layer {layer_name} has CRS: {auth_name}:{auth_code}", 
+            self.logger.log_message(f"- Layer {layer_name} has CRS: {auth_name}:{auth_code}", 
                                 level="info", to_tab=True, to_gui=True, to_notification=False)
             return ogr_srs, auth_name, auth_code
         return ogr_srs, None, None
@@ -868,17 +869,17 @@ class DataProcessor:
                 new_layer.setCrs(crs)
             else:
                 self.logger.log_message(
-                    f"Invalid CRS {auth_name}:{auth_code} for layer {layer_name}",
+                    f"- Invalid CRS {auth_name}:{auth_code} for layer {layer_name}",
                     level="warning", to_tab=True, to_gui=True, to_notification=False
                 )
         else:
             self.logger.log_message(
-                f"No valid CRS found for layer {layer_name}. QGIS might prompt for CRS.",
+                f"- No valid CRS found for layer {layer_name}. QGIS might prompt for CRS.",
                 level="warning", to_tab=True, to_gui=True, to_notification=True
             )
         
         self.logger.log_message(new_layer.crs().authid(), 
-                            level="info", to_tab=True, to_gui=True, to_notification=False)
+                            level="info", to_tab=True, to_gui=False, to_notification=False)
 
         QgsProject.instance().addMapLayer(new_layer, False)
         
@@ -887,7 +888,7 @@ class DataProcessor:
             self._apply_layer_style(new_layer, layer_name, qml_dir, svg_dir)
         
         group.insertLayer(0, new_layer)
-        self.logger.log_message(f"Successfully added layer: {layer_name} under group: {group_name}", 
+        self.logger.log_message(f"-- Successfully added layer: {layer_name} under group: {group_name}", 
                             level="info", to_tab=True, to_gui=True, to_notification=False)
 
     def _get_or_create_group(self, group_dict, group_name):
@@ -902,7 +903,6 @@ class DataProcessor:
 
     def add_svg_path(self, svg_path):
         """Add SVG path to QGIS settings temporarily for this session."""
-        from qgis.core import QgsSettings
         settings = QgsSettings()
         
         # Get existing SVG paths that are visible in GUI
@@ -981,7 +981,7 @@ class DataProcessor:
             return False, str(e)  # Return tuple for consistency
 
 
-    # => General GUI methods
+    # \n=> General GUI methods
     def save_command_history(self):
         """Save the current command history to a file."""
         try:
