@@ -236,7 +236,7 @@ class DataNormalizer:
             # Check for any kind of spaces or invalid characters
             if (any(char in filename_text for char in invalid_chars) or 
                 '.' in filename_text or 
-                ' ' in original_text):  # Check for ANY spaces in original input
+                ' ' in original_text):
                 self.parent_widget.output_filename_input.setStyleSheet("background-color: #ffe6e6;")
                 return False
             else:
@@ -311,7 +311,6 @@ class DataNormalizer:
             self.logger.log_message(f"Error during file processing: {e}", 
                                   level="error", to_tab=True, to_gui=True, to_notification=True)
 
-    # Keep all your existing helper methods (_concatenate_files, _clean_file_content, etc.)
     def _concatenate_files(self, output_file_path):
         """Concatenate selected .txt or .dat files alphabetically and save the result."""
         input_files = self.parent_widget.input_select.text().split("; ")
@@ -540,39 +539,3 @@ class DataNormalizer:
             self.logger.log_message(f"Error adding columns to file {output_file_path}: {e}", 
                                 level="error", to_tab=True, to_gui=True, to_notification=True)
             
-            
-    # def _add_columns_after_line_number(self, file_path):
-    #     """
-    #     Adds the split string (from the user input) after the line numbering in each line of the file.
-    #     The input can contain an arbitrary number of parts separated by '-'.
-    #     """
-    # # Check if the checkbox is checked and input is not empty
-    #     try:
-    #         # Get the input string and split it by '-'
-    #         input_string = self.parent_widget.cols_after_ids_input.text().strip().replace(' ', '')
-    #         split_string = input_string.split('-')
-
-    #         # Read the content of the file
-    #         with open(file_path, 'r', encoding='utf-8') as file:
-    #             lines = file.readlines()
-
-    #         updated_lines = []
-    #         for line in lines:
-    #             # Split the line into components
-    #             parts = line.strip().split()
-
-    #             if parts and parts[0].isdigit():  # Ensure the line starts with a number
-    #                 # Prepare the new line with all split parts
-    #                 updated_line = f"{parts[0]} {' '.join(split_string)} {' '.join(parts[1:])}"
-    #                 updated_lines.append(updated_line)
-    #             else:
-    #                 # In case the line doesn't start with a number, leave it unchanged
-    #                 updated_lines.append(line.strip())
-
-    #         # Write the updated content back to the file
-    #         with open(file_path, 'w', encoding='utf-8') as file:
-    #             file.write("\n".join(updated_lines) + "\n")  # Ensure a newline at the end
-    #         self.logger.log_message(f"Columns added to file: {file_path}", level="info", to_tab=True, to_gui=True, to_notification=False)
-
-    #     except Exception as e:
-    #         self.logger.log_message(f"Error adding columns to file {file_path}: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)

@@ -1055,5 +1055,4 @@ class DataProcessor:
         """Load alias mappings from an .ini file."""
         config = configparser.ConfigParser()
         config.read(alias_file)
-        # Assume all mappings are under a single section called 'aliases'
         return dict(config['aliases']) if 'aliases' in config else {}
