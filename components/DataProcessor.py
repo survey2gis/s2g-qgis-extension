@@ -466,7 +466,7 @@ class DataProcessor:
                     if custom_filename:
                         gpkg_path = os.path.join(output_dir, f"{custom_filename}.gpkg")
                     else:
-                        gpkg_path = os.path.join(output_dir, f"s2g_merged_data_{datetime.now().strftime('%Y-%m-%d-%H_%M')}.gpkg")
+                        gpkg_path = os.path.join(output_dir, f"s2g_merged_data_{datetime.now().strftime('%Y-%m-%d')}.gpkg")
 
                 # Skip if already processed
                 if basename in processed_basenames:
