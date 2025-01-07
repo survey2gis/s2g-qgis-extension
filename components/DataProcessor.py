@@ -231,16 +231,34 @@ class DataProcessor:
     def build_command(self, generated_input_file):
         """Build the command to execute survey2gis."""
         binary_path = self.parent_widget.get_binary_path()
-        command = ['"'+binary_path+'"']
-        command.extend(self.parent_widget.command_options.to_command_list())
+        # Always wrap binary path in quotes
+        command = [f'"{binary_path}"']
+        
+        # Get the command options
+        options = self.parent_widget.command_options.to_command_list()
+        
+        # Process options to wrap paths in quotes where needed
+        i = 0
+        while i < len(options):
+            if options[i] in ['-p', '-o']:  # These options are followed by paths
+                if i + 1 < len(options):
+                    # Wrap the path in quotes, removing any existing quotes first
+                    path = options[i + 1].strip('"')
+                    options[i + 1] = f'"{path}"'
+            i += 1
+        
+        command.extend(options)
         
         if hasattr(self.parent_widget.command_options, 'selections'):
             for selection in self.parent_widget.command_options.selections:
                 command.extend(['-S', selection])
         
-        command.append(generated_input_file)
+        # Wrap the input file path in quotes, removing any existing quotes first
+        input_file = generated_input_file.strip('"')
+        command.append(f'"{input_file}"')
+        
         return command
-
+    
     def process_selection_input(self, text):
         """Process selection input handling both space-separated items and quoted items."""
         selections = []

@@ -901,7 +901,7 @@
                       </size>
                      </property>
                      <property name="placeholderText">
-                      <string>-S, --selection (see manual for details)</string>
+                      <string>EQ:point:OBJEKT:Silber EQ+:point:OBJEKT:Gold EQ+:point:OBJEKT:Bronze</string>
                      </property>
                     </widget>
                    </item>
