@@ -31,7 +31,8 @@ class DataNormalizer:
             'cols_after_id_checkbox': ('s2g_normalize/cols_after_id_checkbox', False),
             'search_character': ('s2g_normalize/search_character', ''),
             'replace_character': ('s2g_normalize/replace_character', ''),
-            'epsg_input': ('s2g_normalize/epsg_input', '')
+            'epsg_input': ('s2g_normalize/epsg_input', ''),
+            'alias_file_input': ('s2g_normalize/alias_file_input', ''), # in process tab !
         }
 
     def setup(self, parent_widget):

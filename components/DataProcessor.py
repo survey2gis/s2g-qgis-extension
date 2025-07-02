@@ -68,7 +68,6 @@ class DataProcessor:
         }
 
         self.connect_signals()
-        self.load_command_history()
 
     def connect_signals(self):
         """Connect GUI elements to their respective methods."""
@@ -106,6 +105,7 @@ class DataProcessor:
 
         self.parent_widget.add_command_button.clicked.connect(self.add_command)
         self.parent_widget.save_commands_button.clicked.connect(self.save_command_history)
+        self.parent_widget.load_commands_button.clicked.connect(self.load_commands_from_file) 
         self.parent_widget.run_commands_button.clicked.connect(self.run_commands)
 
 
@@ -988,27 +988,95 @@ class DataProcessor:
 
     # \n=> General GUI methods
     def save_command_history(self):
-        """Save the current command history to a file."""
+        """Save the current command history to a user-selected file."""
         try:
-            with open(self.command_history_file, 'w', encoding='utf-8') as f:
-                f.write(self.parent_widget.command_code_field.toPlainText())
-            self.logger.log_message(f"Command history saved to {self.command_history_file}", level="success", to_tab=True, to_gui=False, to_notification=False)
-
+            # Get current command content
+            content = self.parent_widget.command_code_field.toPlainText()
+            
+            if not content.strip():
+                self.logger.log_message("No commands to save", level="info", to_tab=False, to_gui=True, to_notification=True)
+                return
+            
+            # Show save dialog
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                self.parent_widget,
+                "Save Commands",
+                "commands.txt",  # Default filename
+                "Text Files (*.txt);;All Files (*)"
+            )
+            
+            if file_path:
+                # Add .txt extension if user didn't provide any extension
+                if not os.path.splitext(file_path)[1]:
+                    file_path += '.txt'
+                
+                # Save the file
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                
+                self.logger.log_message(f"Commands saved to {file_path}", level="success", to_tab=True, to_gui=True, to_notification=True)
+                
         except Exception as e:
-            self.logger.log_message(f"Error saving command history: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
+            self.logger.log_message(f"Error saving commands: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
 
-    def load_command_history(self):
-        """Load command history from file if it exists."""
+    def load_commands_from_file(self):
+        """Load commands from a user-selected file."""
         try:
-            if os.path.exists(self.command_history_file):
-                with open(self.command_history_file, 'r', encoding='utf-8') as f:
+            # Show open dialog
+            file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self.parent_widget,
+                "Load Commands",
+                "",  # Start in current directory
+                "Text Files (*.txt);;All Files (*)"
+            )
+            
+            if file_path:
+                # Check if file exists
+                if not os.path.exists(file_path):
+                    self.logger.log_message(f"File not found: {file_path}", level="error", to_tab=False, to_gui=True, to_notification=True)
+                    return
+                
+                # Read the file
+                with open(file_path, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    if content.strip():
+                
+                if content.strip():
+                    # Ask user if they want to append or replace existing content
+                    existing_content = self.parent_widget.command_code_field.toPlainText().strip()
+                    
+                    if existing_content:
+                        reply = QtWidgets.QMessageBox.question(
+                            self.parent_widget,
+                            "Load Commands",
+                            "Commands already exist in the field. Do you want to:\n\n"
+                            "• Yes: Replace existing commands\n"
+                            "• No: Append to existing commands\n"
+                            "• Cancel: Cancel loading",
+                            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel,
+                            QtWidgets.QMessageBox.Cancel
+                        )
+                        
+                        if reply == QtWidgets.QMessageBox.Yes:
+                            # Replace existing content
+                            self.parent_widget.command_code_field.setPlainText(content)
+                        elif reply == QtWidgets.QMessageBox.No:
+                            # Append to existing content
+                            combined_content = existing_content + '\n' + content
+                            self.parent_widget.command_code_field.setPlainText(combined_content)
+                        else:
+                            # Cancel - do nothing
+                            return
+                    else:
+                        # No existing content, just set the new content
                         self.parent_widget.command_code_field.setPlainText(content)
-                        self.logger.log_message(f"Command history loaded from {self.command_history_file}", level="info", to_tab=False, to_gui=True, to_notification=False)
-
+                    
+                    self.logger.log_message(f"Commands loaded from {file_path}", level="success", to_tab=True, to_gui=True, to_notification=True)
+                else:
+                    self.logger.log_message(f"File is empty: {file_path}", level="info", to_tab=False, to_gui=True, to_notification=True)
+                
         except Exception as e:
-            self.logger.log_message(f"Error loading command history: {e}", level="error", to_tab=True, to_gui=True, to_notification=False)
+            self.logger.log_message(f"Error loading commands: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
+
 
     def handle_file_cleanup(self):
         """
