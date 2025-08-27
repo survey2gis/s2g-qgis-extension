@@ -6,7 +6,7 @@
 name=Survey2Gis Data Processor
 qgisMinimumVersion=3.0
 description=Survey2Gis QGIS Frontend for QGIS
-version=0.2.2
+version=0.2.3
 author=Landesamt für Denkmalpflege im Regierungspräsidium Stuttgart; CSGIS gbr.
 email=toni.schoenbuchner@csgis.de
 

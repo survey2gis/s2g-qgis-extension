@@ -10,7 +10,7 @@ from .resources import *
 from .s2g_data_processor_dockwidget import S2gDataProcessorDockWidget
 import shutil
 from .s2g_logging import Survey2GISLogger
-
+from qgis.core import QgsExpressionContextUtils
 
 class S2gDataProcessor:
     """QGIS Plugin Implementation."""
@@ -24,13 +24,33 @@ class S2gDataProcessor:
         # Initialize settings
         self.settings = QSettings('CSGIS', 'Survey2GIS_DataProcessor')
 
-        self._download_and_extract_binaries()
+        # Check if global QGIS variable s2g_path is set
+        self.global_binary_path = QgsExpressionContextUtils.globalScope().variable("s2g_path")
 
+        if self.global_binary_path:
+            if os.path.exists(self.global_binary_path):
+                self.logger.log_message(
+                    f"Using global binary path from s2g_path: {self.global_binary_path}",
+                    level="info", to_tab=True, to_gui=True, to_notification=False
+                )
+            else:
+                self.logger.log_message(
+                    f"Global variable s2g_path is set but binary not found: {self.global_binary_path}",
+                    level="error", to_tab=True, to_gui=True, to_notification=True
+                )
+                # Fallback to local management
+                self._download_and_extract_binaries()
+        else:
+            # No global override, proceed with local binaries
+            self._download_and_extract_binaries()
+
+        # Translation setup
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'S2gDataProcessor_{}.qm'.format(locale))
+            'S2gDataProcessor_{}.qm'.format(locale)
+        )
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -145,10 +165,13 @@ class S2gDataProcessor:
 
 
     def get_binary_path(self):
-        """Return the path to the appropriate binary based on the current platform."""
+        """Return the path to the binary, preferring global override if set."""
+        if self.global_binary_path:
+            return os.path.normpath(self.global_binary_path)
+
         system = platform.system().lower()
         base_path = os.path.dirname(__file__)
-        
+
         if system == "windows":
             path = os.path.join(base_path, "survey2gis", "win32", "cli-only", "survey2gis.exe")
         elif system == "linux":
@@ -158,7 +181,6 @@ class S2gDataProcessor:
         else:
             raise NotImplementedError("Your operating system is not supported.")
 
-        # return os.path.normpath('"'+path+'"')
         return os.path.normpath(path)
 
     def ensure_binary_executable(self):

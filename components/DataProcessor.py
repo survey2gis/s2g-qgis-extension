@@ -57,7 +57,8 @@ class DataProcessor:
             '--x-offset': self.parent_widget.x_offset_input,
             '--y-offset': self.parent_widget.y_offset_input,
             '--proj-in': self.parent_widget.proj_in_input,
-            '--proj-out': self.parent_widget.proj_out_input
+            '--proj-out': self.parent_widget.proj_out_input,
+            '--orientation': self.parent_widget.orientation_input
         }
 
         self.flag_options_fields = {
@@ -114,13 +115,19 @@ class DataProcessor:
     def reset_text_field(self, field):
         field.setText("")
 
+    def sanitize_path(self, path):
+        """Sanitize path for cross-platform compatibility."""
+        if not path:
+            return path
+        return os.path.normpath(path.strip().strip('"'))
+
     def select_data_input_file(self):
         """Open file dialog to select one parser file."""
         file, _ = QtWidgets.QFileDialog.getOpenFileName(
             self.parent_widget, "Select Parser File", "", "All Files (*)"
         )
         if file:
-            self.parent_widget.process_input_file_input.setText(file)
+            self.parent_widget.process_input_file_input.setText(self.sanitize_path(file))
 
     def select_parser_file(self):
         """Open file dialog to select one parser file."""
@@ -128,7 +135,7 @@ class DataProcessor:
             self.parent_widget, "Select Parser File", "", "All Files (*)"
         )
         if file:
-            self.parent_widget.select_parser_input.setText(file)
+            self.parent_widget.select_parser_input.setText(self.sanitize_path(file))
 
     def select_alias_file(self):
         """Open file dialog to select one alias file."""
@@ -136,9 +143,10 @@ class DataProcessor:
             self.parent_widget, "Select alias File", "", "Data Files (*.dat *.txt);;All Files (*)"
         )
         if file:
-            self.parent_widget.alias_file_input.setText(file)
-            self.alias_mapping = self.load_alias_mapping(str(file))
-            self.logger.log_message(f"Changed alias file to {file}", level="info", to_tab=False, to_gui=True, to_notification=False)
+            sanitized_file = self.sanitize_path(file)
+            self.parent_widget.alias_file_input.setText(sanitized_file)
+            self.alias_mapping = self.load_alias_mapping(sanitized_file)
+            self.logger.log_message(f"Changed alias file to {sanitized_file}", level="info", to_tab=False, to_gui=True, to_notification=False)
 
     def select_output_directory(self):
         """Open file dialog to select an output directory."""
@@ -146,9 +154,9 @@ class DataProcessor:
             self.parent_widget, "Select Output Directory", ""
         )
         if directory:
-            self.parent_widget.shape_output_path_input.setText(directory) 
-            self.parent_widget.command_options.output_directory = directory 
-
+            sanitized_directory = self.sanitize_path(directory)
+            self.parent_widget.shape_output_path_input.setText(sanitized_directory) 
+            self.parent_widget.command_options.output_directory = sanitized_directory
  
     def validate_epsg_input(self):
         """Validate EPSG input when it changes."""
@@ -187,7 +195,6 @@ class DataProcessor:
             joined_command = " ".join(command)
             self.logger.log_message(joined_command, level="info", to_tab=False, to_gui=True, to_notification=False)
             self.parent_widget.command_code_field.append(joined_command)
-            self.save_command_history()
 
         except FileNotFoundError as e:
             self.logger.log_message(f"File not found: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
