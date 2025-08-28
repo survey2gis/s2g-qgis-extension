@@ -115,7 +115,7 @@ class DataProcessor:
 
 
 
-    # \n=> GUI Methods
+    # GUI Methods
     def reset_text_field(self, field):
         field.setText("")
 
@@ -265,7 +265,7 @@ class DataProcessor:
                 command.extend(['-S', selection])
         
         # Wrap the input file path in quotes, removing any existing quotes first
-        input_file = generated_input_file.strip('"')
+        input_file = self.sanitize_path(generated_input_file)
         command.append(f'"{input_file}"')
         
         return command
