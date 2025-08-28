@@ -31,8 +31,12 @@ class DataProcessor:
         self.current_commands = []
         self.current_command_index = 0
 
-        self.mapping_filename = os.path.join(os.path.dirname(__file__), "..", "alias.txt")
-        self.alias_mapping = self.load_alias_mapping(self.mapping_filename )
+        saved_alias_file = self.parent_widget.alias_file_input.text().strip()
+        if saved_alias_file and os.path.exists(saved_alias_file):
+            self.alias_mapping = self.load_alias_mapping(saved_alias_file)
+            self.logger.log_message(f"Loaded previously selected alias file: {saved_alias_file}", level="info", to_tab=False, to_gui=True, to_notification=False)
+        else:
+            self.alias_mapping = {}
 
         # Define field mapping for options
         self.option_fields = {
