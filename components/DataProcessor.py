@@ -955,6 +955,11 @@ class DataProcessor:
         """Update SVG paths in QML content to use absolute paths."""
         try:
             import xml.etree.ElementTree as ET
+            try:
+                import defusedxml
+                defusedxml.defuse_stdlib()
+            except ImportError:
+                pass
             
             # Parse the QML file
             tree = ET.parse(qml_file)
