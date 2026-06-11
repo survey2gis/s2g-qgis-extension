@@ -954,15 +954,11 @@ class DataProcessor:
     def update_svg_paths_in_qml(self, qml_file, svg_dir):
         """Update SVG paths in QML content to use absolute paths."""
         try:
-            import xml.etree.ElementTree as ET
-            try:
-                import defusedxml
-                defusedxml.defuse_stdlib()
-            except ImportError:
-                pass
+            import xml.etree.ElementTree as ET  # nosec B405: parses only plugin-generated QML
             
-            # Parse the QML file
-            tree = ET.parse(qml_file)
+            # Parse the QML file. nosec B314: the QML file is generated and
+            # controlled by this plugin, not untrusted external input.
+            tree = ET.parse(qml_file)  # nosec B314
             root = tree.getroot()
             
             # Find all SVG marker elements

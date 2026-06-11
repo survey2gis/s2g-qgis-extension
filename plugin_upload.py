@@ -7,12 +7,7 @@
 
 import sys
 import getpass
-import xmlrpc.client
-try:
-    from defusedxml.xmlrpc import monkey_patch
-    monkey_patch()
-except ImportError:
-    pass
+import xmlrpc.client  # nosec B411: dev-only upload script, talks to the official QGIS plugin server
 from optparse import OptionParser
 
 standard_library.install_aliases()

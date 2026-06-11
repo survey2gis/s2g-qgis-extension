@@ -221,7 +221,9 @@ class S2gDataProcessor:
             extract_path = os.path.join(self.plugin_dir, "survey2gis")
 
             # Download binaries
-            with urllib.request.urlopen(self.binaries_url) as response:
+            if not self.binaries_url.lower().startswith(("https://", "http://")):
+                raise ValueError("Binaries URL must use http(s) scheme")
+            with urllib.request.urlopen(self.binaries_url) as response:  # nosec B310: scheme validated above
                 with open(zip_path, 'wb') as f:
                     f.write(response.read())
 
