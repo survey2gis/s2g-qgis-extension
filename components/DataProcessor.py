@@ -644,6 +644,14 @@ class DataProcessor:
 
             lyr = ds.GetLayer()
             layer_name = os.path.splitext(os.path.basename(file))[0]
+            # If this group contains only a single geometry type, drop the
+            # survey2gis geometry suffix (_poly/_line/_point/_labels) so the
+            # layer name matches the name the user entered (and its .qml style).
+            # If the group has multiple geometry types, keep the suffix to
+            # avoid name collisions inside the GeoPackage.
+            if len(files) == 1:
+                layer_name = re.sub(r'_(poly|line|point|labels)$', '', layer_name,
+                                    flags=re.IGNORECASE)
             srs = None
             epsg_code = None
 
