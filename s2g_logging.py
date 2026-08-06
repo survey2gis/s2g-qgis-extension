@@ -26,19 +26,19 @@ class Survey2GISLogger:
 
         # Convert the level to QGIS compatible level and logging level
         if level == "info":
-            qgis_level = Qgis.Info
+            qgis_level = Qgis.MessageLevel.Info
             log_level = logging.INFO
         if level == "success":
-            qgis_level = Qgis.Info
+            qgis_level = Qgis.MessageLevel.Info
             log_level = logging.INFO
         elif level == "warning":
-            qgis_level = Qgis.Warning
+            qgis_level = Qgis.MessageLevel.Warning
             log_level = logging.WARNING
         elif level == "error":
-            qgis_level = Qgis.Critical
+            qgis_level = Qgis.MessageLevel.Critical
             log_level = logging.ERROR
         else:
-            qgis_level = Qgis.Info
+            qgis_level = Qgis.MessageLevel.Info
             log_level = logging.INFO
 
         # Log to QGIS plugin tab
@@ -56,7 +56,7 @@ class Survey2GISLogger:
         if to_notification:
             self.show_notification_bar(message, level=qgis_level)
 
-    def show_notification_bar(self, message, level=Qgis.Info):
+    def show_notification_bar(self, message, level=Qgis.MessageLevel.Info):
         """Display a transient notification bar message in QGIS."""
         if iface:  # Check if iface is available
             messageBar = iface.messageBar()  # QGIS interface

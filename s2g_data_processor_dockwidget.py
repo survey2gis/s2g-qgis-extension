@@ -1,7 +1,7 @@
 import os
 import platform
 import logging
-from PyQt5 import QtWidgets, uic, QtCore, QtGui
+from qgis.PyQt import QtWidgets, uic, QtCore, QtGui
 from dataclasses import dataclass, field
 from osgeo import ogr
 from qgis.gui import QgsMessageBar

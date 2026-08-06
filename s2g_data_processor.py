@@ -160,7 +160,7 @@ class S2gDataProcessor:
             if self.dockwidget is None:
                 self.dockwidget = S2gDataProcessorDockWidget()
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+            self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
 

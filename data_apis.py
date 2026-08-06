@@ -240,7 +240,7 @@ class iDAIGazetteerAPIQueryStrategy(APIQueryStrategy):
             if reply.errorString():
                 Log.log_debug(reply.errorString())
                 iface.messageBar().pushMessage(
-                    "KGR", reply.errorString(), level=Qgis.Critical, duration=3
+                    "KGR", reply.errorString(), level=Qgis.MessageLevel.Critical, duration=3
                 )
 
         if reply.content():

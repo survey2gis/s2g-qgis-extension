@@ -1,5 +1,5 @@
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QSettings
+from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt.QtCore import QSettings
 import os
 from datetime import datetime
 import shutil
@@ -9,8 +9,8 @@ FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), '..', "s2g_data_processor_dockwidget_base.ui")
 )
 
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QSettings
+from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt.QtCore import QSettings
 
 class DataNormalizer:
     def __init__(self):

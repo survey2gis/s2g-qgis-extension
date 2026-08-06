@@ -1,5 +1,5 @@
 import os
-from PyQt5 import QtWidgets, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.core import QgsProject, QgsVectorLayer
 from qgis.core import QgsProject
 from osgeo import ogr, osr
@@ -1072,14 +1072,14 @@ class DataProcessor:
                             "• Yes: Replace existing commands\n"
                             "• No: Append to existing commands\n"
                             "• Cancel: Cancel loading",
-                            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel,
-                            QtWidgets.QMessageBox.Cancel
+                            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel,
+                            QtWidgets.QMessageBox.StandardButton.Cancel
                         )
                         
-                        if reply == QtWidgets.QMessageBox.Yes:
+                        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                             # Replace existing content
                             self.parent_widget.command_code_field.setPlainText(content)
-                        elif reply == QtWidgets.QMessageBox.No:
+                        elif reply == QtWidgets.QMessageBox.StandardButton.No:
                             # Append to existing content
                             combined_content = existing_content + '\n' + content
                             self.parent_widget.command_code_field.setPlainText(combined_content)
