@@ -82,16 +82,49 @@ class S2gDataProcessorDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def get_binary_path(self):
         system = platform.system().lower()
+        architecture = platform.machine().lower()
         base_path = os.path.dirname(__file__)
-        
+
         if system == "windows":
-            path = os.path.join(base_path, "survey2gis", "win32", "cli-only", "survey2gis.exe")
+            path = os.path.join(
+                base_path,
+                "survey2gis",
+                "win32",
+                "cli-only",
+                "survey2gis.exe",
+            )
+
         elif system == "linux":
-            path = os.path.join(base_path, "survey2gis", "linux64", "cli-only", "survey2gis")
+            path = os.path.join(
+                base_path,
+                "survey2gis",
+                "linux64",
+                "cli-only",
+                "survey2gis",
+            )
+
         elif system == "darwin":
-            path = os.path.join(base_path, "survey2gis", "macosx", "cli-only", "survey2gis")
+            if architecture in ("arm64", "aarch64"):
+                macos_folder = "macosx-silicon"
+            elif architecture in ("x86_64", "amd64"):
+                macos_folder = "macosx"
+            else:
+                raise NotImplementedError(
+                    f"Unsupported macOS architecture: {architecture}"
+                )
+
+            path = os.path.join(
+                base_path,
+                "survey2gis",
+                macos_folder,
+                "cli-only",
+                "survey2gis",
+            )
+
         else:
-            raise NotImplementedError("Your operating system is not supported.")
+            raise NotImplementedError(
+                f"Operating system '{system}' is not supported."
+            )
 
         return os.path.normpath(path)
 

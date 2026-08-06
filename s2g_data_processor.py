@@ -216,60 +216,113 @@ class S2gDataProcessor:
 
         return os.path.normpath(path)
 
-        return os.path.normpath(path)
 
     def ensure_binary_executable(self):
         """Ensure the binary has executable permissions."""
         system = platform.system().lower()
         binary_path = self.get_binary_path()
 
-        if os.path.exists(binary_path):
-            if system == "linux" or system == "darwin":
-                st = os.stat(binary_path)
-                if not (st.st_mode & 0o111):
-                    os.chmod(binary_path, st.st_mode | 0o111)
-                    self.logger.log_message(f"Set executable permissions for {binary_path}", level="info", to_tab=True, to_gui=False, to_notification=False)
-                else:
-                    self.logger.log_message(f"{binary_path} is already executable", level="info", to_tab=True, to_gui=False, to_notification=False)
+        if not os.path.isfile(binary_path):
+            self.logger.log_message(
+                f"Binary not found: {binary_path}",
+                level="error",
+                to_tab=True,
+                to_gui=False,
+                to_notification=False,
+            )
+            return False
 
-                    return True
-            elif system == "windows":
-                # On Windows, do nothing as it doesn't use chmod for executable permissions
-                pass
+        if system == "windows":
+            return True
+
+        if system not in ("linux", "darwin"):
+            self.logger.log_message(
+                f"Unsupported operating system: {system}",
+                level="error",
+                to_tab=True,
+                to_gui=False,
+                to_notification=False,
+            )
+            return False
+
+        try:
+            current_mode = os.stat(binary_path).st_mode
+
+            if not current_mode & 0o111:
+                os.chmod(binary_path, current_mode | 0o111)
+
+                self.logger.log_message(
+                    f"Set executable permissions for {binary_path}",
+                    level="info",
+                    to_tab=True,
+                    to_gui=False,
+                    to_notification=False,
+                )
             else:
-                self.logger.log_message(f"Unsupported operating system: {system}", level="error", to_tab=True, to_gui=False, to_notification=False)
+                self.logger.log_message(
+                    f"{binary_path} is already executable",
+                    level="info",
+                    to_tab=True,
+                    to_gui=False,
+                    to_notification=False,
+                )
 
-        else:
-            self.logger.log_message(f"Binary {binary_path} not found", level="error", to_tab=True, to_gui=False, to_notification=False)
+            return os.access(binary_path, os.X_OK)
+
+        except OSError as error:
+            self.logger.log_message(
+                f"Could not set executable permissions for "
+                f"{binary_path}: {error}",
+                level="error",
+                to_tab=True,
+                to_gui=True,
+                to_notification=True,
+            )
             return False
 
     def _download_and_extract_binaries(self):
-        download_binary = self.ensure_binary_executable()
-        if download_binary == False:
-            self.logger.log_message(f"Downloading binary", level="info", to_tab=True, to_gui=False, to_notification=False)
+        if self.ensure_binary_executable():
+            return
 
-            if not os.path.exists(self.download_dir):
-                os.makedirs(self.download_dir)
+        self.logger.log_message(
+            "Downloading binary",
+            level="info",
+            to_tab=True,
+            to_gui=False,
+            to_notification=False,
+        )
 
-            # Define paths
-            zip_path = os.path.join(self.download_dir, "binaries.zip")
-            extract_path = os.path.join(self.plugin_dir, "survey2gis")
+        if not os.path.exists(self.download_dir):
+            os.makedirs(self.download_dir)
 
-            # Download binaries
-            if not self.binaries_url.lower().startswith(("https://", "http://")):
-                raise ValueError("Binaries URL must use http(s) scheme")
-            with urllib.request.urlopen(self.binaries_url) as response:  # nosec B310: scheme validated above
-                with open(zip_path, 'wb') as f:
-                    f.write(response.read())
+        zip_path = os.path.join(self.download_dir, "binaries.zip")
+        extract_path = os.path.join(self.plugin_dir, "survey2gis")
 
-            # Extract binaries
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(extract_path)
+        if not self.binaries_url.lower().startswith(("https://", "http://")):
+            raise ValueError("Binaries URL must use http(s) scheme")
 
-            # Cleanup
-            os.remove(zip_path)
+        with urllib.request.urlopen(self.binaries_url) as response:
+            with open(zip_path, "wb") as file:
+                file.write(response.read())
 
-            try:
-                shutil.rmtree(self.download_dir)
-            except OSError as e:
-                print("Error: %s - %s." % (e.filename, e.strerror))
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(extract_path)
+
+        # Wichtig: Das gerade entpackte Binary ausführbar machen
+        if not self.ensure_binary_executable():
+            raise PermissionError(
+                f"Could not make binary executable: {self.get_binary_path()}"
+            )
+
+        os.remove(zip_path)
+
+        try:
+            shutil.rmtree(self.download_dir)
+        except OSError as error:
+            self.logger.log_message(
+                f"Could not remove download directory: {error}",
+                level="warning",
+                to_tab=True,
+                to_gui=False,
+                to_notification=False,
+            )
