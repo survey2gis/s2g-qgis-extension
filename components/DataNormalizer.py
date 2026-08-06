@@ -33,6 +33,7 @@ class DataNormalizer:
             'replace_character': ('s2g_normalize/replace_character', ''),
             'epsg_input': ('s2g_normalize/epsg_input', ''),
             'alias_file_input': ('s2g_normalize/alias_file_input', ''), # in process tab !
+            'geopackage_name_input': ('s2g_process/geopackage_name_input', ''), # in process tab !
         }
 
     def setup(self, parent_widget):

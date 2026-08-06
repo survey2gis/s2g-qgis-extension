@@ -491,8 +491,11 @@ class DataProcessor:
                 # Set the output directory and GeoPackage path
                 if output_dir is None:
                     output_dir = current_output_dir
+                    geopackage_filename = self.parent_widget.geopackage_name_input.text().strip()
                     custom_filename = self.parent_widget.output_filename_input.text().strip()
-                    if custom_filename:
+                    if geopackage_filename:
+                        gpkg_path = os.path.join(output_dir, f"{geopackage_filename}.gpkg")
+                    elif custom_filename:
                         gpkg_path = os.path.join(output_dir, f"{custom_filename}.gpkg")
                     else:
                         gpkg_path = os.path.join(output_dir, f"s2g_merged_data_{datetime.now().strftime('%Y-%m-%d')}.gpkg")

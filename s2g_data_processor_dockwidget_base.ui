@@ -782,6 +782,22 @@
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_geopackage_name">
+              <property name="title">
+               <string>Optional name of geopackage</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout_geopackage_name">
+               <item row="0" column="0" colspan="2">
+                <widget class="QLineEdit" name="geopackage_name_input">
+                 <property name="placeholderText">
+                  <string>Fallback: s2g_merged_data_&lt;date&gt;</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBox_7">
               <property name="title">
                <string>Optional path to alias file</string>
