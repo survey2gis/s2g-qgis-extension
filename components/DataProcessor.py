@@ -406,13 +406,13 @@ class DataProcessor:
 
     def handle_stdout_sequential(self):
         """Handle standard output from the current process."""
-        data = self.process.readAllStandardOutput().data().decode()
+        data = self.process.readAllStandardOutput().data().decode('utf-8', errors='replace')
         self.current_command_output.append(data)
         self.logger.log_message(f"{data}", level="info", to_tab=True, to_gui=True, to_notification=False)
 
     def handle_stderr_sequential(self):
         """Handle standard error from the current process."""
-        data = self.process.readAllStandardError().data().decode()
+        data = self.process.readAllStandardError().data().decode('utf-8', errors='replace')
         self.current_command_output.append(data)
         # self.logger.log_message(f"{data}", level="info", to_tab=True, to_gui=True, to_notification=False)
 
@@ -423,7 +423,7 @@ class DataProcessor:
         try:
             log_content = ""
             if os.path.exists(self.log_file_path):
-                with open(self.log_file_path, 'r') as f:
+                with open(self.log_file_path, 'r', encoding='utf-8', errors='replace') as f:
                     log_content = f.read()
                     self.logger.log_message(log_content, level="info", to_tab=True, to_gui=True, to_notification=False)
 
