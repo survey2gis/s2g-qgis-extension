@@ -423,7 +423,7 @@
                   </palette>
                  </property>
                  <property name="text">
-                  <string>A string that will be inserted after the row ID. Add spaces to define columns.</string>
+                  <string>String inserted after row ID. End input with the parser delimiter.</string>
                  </property>
                 </widget>
                </item>
