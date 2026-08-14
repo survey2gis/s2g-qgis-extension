@@ -372,27 +372,74 @@ class DataProcessor:
     def run_process_sequential(self, command_parts):
         """Run a single process and handle its completion."""
         try:
+            # Make sure the binary is actually runnable before we launch it.
+            # Without this a missing exec-bit (Linux/macOS) or a blocked exe
+            # (Windows) makes QProcess.start() fail silently, and the only
+            # symptom the user sees is the 60-second inactivity timeout.
+            if hasattr(self.parent_widget, "ensure_binary_executable"):
+                if not self.parent_widget.ensure_binary_executable():
+                    self._handle_command_failure(
+                        -1, "survey2gis binary is not executable - aborting."
+                    )
+                    return
+
             self.process = QtCore.QProcess(self.parent_widget)
-            
+
             # Initialize timeout tracking
             self.last_output_time = datetime.now()
             self.timeout_timer = QtCore.QTimer()
             self.timeout_timer.setInterval(60000)  # 60 seconds
             self.timeout_timer.timeout.connect(self._check_process_activity)
-            
+
             # Connect signals
             self.process.readyReadStandardOutput.connect(self.handle_stdout_sequential)
             self.process.readyReadStandardError.connect(self.handle_stderr_sequential)
             self.process.finished.connect(self.handle_process_finished_sequential)
+            # Surface a failed start immediately instead of waiting for timeout.
+            self.process.errorOccurred.connect(self.handle_process_error)
 
-            # Start process and timer
-            program = command_parts[0]
-            arguments = command_parts[1:]
+            # Start process and timer.
+            # command_parts[0] is the binary path wrapped in quotes for display;
+            # QProcess handles quoting itself, so we must pass the raw path as
+            # the program or Qt will look for a file literally named '"..."'.
+            program = command_parts[0].strip('"')
+            arguments = [arg.strip('"') for arg in command_parts[1:]]
             self.process.start(program, arguments)
             self.timeout_timer.start()
 
+            # Confirm the process actually launched. On a failed start this
+            # returns quickly and we report a real error.
+            if not self.process.waitForStarted(5000):
+                self.timeout_timer.stop()
+                # Avoid double-handling via finished/errorOccurred signals.
+                try:
+                    self.process.finished.disconnect(self.handle_process_finished_sequential)
+                    self.process.errorOccurred.disconnect(self.handle_process_error)
+                except Exception:
+                    pass
+                self.logger.log_message(
+                    f"Process failed to start: {program} "
+                    f"({self.process.errorString()}). "
+                    f"Run 'diagnose binary' in the Logs tab for details.",
+                    level="error", to_tab=True, to_gui=True, to_notification=True,
+                )
+                self._handle_command_failure(-1, "Process failed to start")
+
         except Exception as e:
             self.logger.log_message(f"Failed to start process: {e}", level="error", to_tab=True, to_gui=True, to_notification=True)
+
+    def handle_process_error(self, error):
+        """Report QProcess errors (failed start, crash, etc.) right away."""
+        try:
+            if self.timeout_timer:
+                self.timeout_timer.stop()
+        except Exception:
+            pass
+        error_string = self.process.errorString() if self.process else str(error)
+        self.logger.log_message(
+            f"survey2gis process error: {error_string}",
+            level="error", to_tab=True, to_gui=True, to_notification=True,
+        )
 
     def _check_process_activity(self):
         """Check if process has been inactive for too long."""

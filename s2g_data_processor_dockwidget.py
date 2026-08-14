@@ -18,6 +18,7 @@ logger.setLevel(logging.DEBUG)
 from .components.DataNormalizer import DataNormalizer
 from .components.DataProcessor import DataProcessor
 from .components.LogTab import LogTab
+from .components import binary_utils
 
 @dataclass
 class CommandOptions:
@@ -81,52 +82,62 @@ class S2gDataProcessorDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         event.accept()
 
     def get_binary_path(self):
-        system = platform.system().lower()
-        architecture = platform.machine().lower()
-        base_path = os.path.dirname(__file__)
+        """Resolve the survey2gis binary path.
 
-        if system == "windows":
-            path = os.path.join(
-                base_path,
-                "survey2gis",
-                "win32",
-                "cli-only",
-                "survey2gis.exe",
+        Honors the QGIS global override variable ``s2g_path`` if it is set and
+        points to an existing file, otherwise falls back to the bundled binary
+        for the current platform. Uses the shared resolver so the path can
+        never drift from what the diagnostics report.
+        """
+        override = None
+        try:
+            from qgis.core import QgsExpressionContextUtils
+            candidate = QgsExpressionContextUtils.globalScope().variable("s2g_path")
+            if candidate and os.path.exists(candidate):
+                override = candidate
+        except Exception:
+            override = None
+
+        return binary_utils.resolve_binary_path(
+            os.path.dirname(__file__), global_override=override
+        )
+
+    def ensure_binary_executable(self):
+        """Make sure the binary can be executed before we launch it.
+
+        Returns True if the binary is (now) runnable, False otherwise. Any
+        problem is logged to the Logs tab so the user gets a real error
+        instead of a silent 60-second timeout.
+        """
+        binary_path = self.get_binary_path()
+        info = binary_utils.inspect_binary(binary_path)
+
+        if not info["is_file"]:
+            self.data_processor.logger.log_message(
+                f"survey2gis binary not found: {binary_path}",
+                level="error", to_tab=True, to_gui=True, to_notification=True,
+            )
+            return False
+
+        if not info["executable"]:
+            success, message = binary_utils.make_binary_executable(binary_path)
+            self.data_processor.logger.log_message(
+                message,
+                level="success" if success else "error",
+                to_tab=True, to_gui=True, to_notification=not success,
+            )
+            if not success:
+                return False
+
+        # Report missing runtime dependencies (mostly Windows DLLs).
+        missing = [name for name, present in info["dependencies"] if not present]
+        if missing:
+            self.data_processor.logger.log_message(
+                "Missing survey2gis runtime dependencies: " + ", ".join(missing),
+                level="warning", to_tab=True, to_gui=True, to_notification=True,
             )
 
-        elif system == "linux":
-            path = os.path.join(
-                base_path,
-                "survey2gis",
-                "linux64",
-                "cli-only",
-                "survey2gis",
-            )
-
-        elif system == "darwin":
-            if architecture in ("arm64", "aarch64"):
-                macos_folder = "macosx-silicon"
-            elif architecture in ("x86_64", "amd64"):
-                macos_folder = "macosx"
-            else:
-                raise NotImplementedError(
-                    f"Unsupported macOS architecture: {architecture}"
-                )
-
-            path = os.path.join(
-                base_path,
-                "survey2gis",
-                macos_folder,
-                "cli-only",
-                "survey2gis",
-            )
-
-        else:
-            raise NotImplementedError(
-                f"Operating system '{system}' is not supported."
-            )
-
-        return os.path.normpath(path)
+        return True
 
 class S2gDataProcessor:
     def __init__(self, iface):
