@@ -129,14 +129,6 @@ class S2gDataProcessorDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             if not success:
                 return False
 
-        # Report missing runtime dependencies (mostly Windows DLLs).
-        missing = [name for name, present in info["dependencies"] if not present]
-        if missing:
-            self.data_processor.logger.log_message(
-                "Missing survey2gis runtime dependencies: " + ", ".join(missing),
-                level="warning", to_tab=True, to_gui=True, to_notification=True,
-            )
-
         return True
 
 class S2gDataProcessor:

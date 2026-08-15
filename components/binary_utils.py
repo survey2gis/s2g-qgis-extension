@@ -104,20 +104,26 @@ def inspect_binary(binary_path):
         except OSError:
             pass
 
-        # Check the DLLs survey2gis ships next to the exe.
+        # List the DLLs that actually sit next to the exe. This is purely
+        # informational: the cli-only build ships a different (smaller) set of
+        # DLLs than the full GUI build, so a hard "required" list produces
+        # false alarms. We only report what is there and never treat a missing
+        # entry as a blocker.
         bin_dir = os.path.dirname(binary_path)
-        required_dlls = [
-            "libglib-2.0-0.dll",
-            "libgobject-2.0-0.dll",
-            "libiconv-2.dll",
-            "libintl-8.dll",
-            "zlib1.dll",
-        ]
-        for dll in required_dlls:
-            present = os.path.isfile(os.path.join(bin_dir, dll))
-            info["dependencies"].append((dll, present))
-            if not present:
-                info["notes"].append(f"Missing runtime dependency: {dll}")
+        try:
+            found_dlls = sorted(
+                name for name in os.listdir(bin_dir)
+                if name.lower().endswith(".dll")
+            )
+        except OSError:
+            found_dlls = []
+        for dll in found_dlls:
+            info["dependencies"].append((dll, True))
+        if not found_dlls:
+            info["notes"].append(
+                "No DLLs found next to the exe. If the program fails to "
+                "start, the runtime libraries may be missing."
+            )
     else:
         info["executable"] = os.access(binary_path, os.X_OK)
         if not info["executable"]:
@@ -179,6 +185,22 @@ def make_binary_executable(binary_path):
             msg = f"Set executable permissions for {binary_path}"
         else:
             msg = f"{binary_path} is already executable"
+
+        # On macOS, also strip the Gatekeeper quarantine flag if present.
+        # Without this the OS refuses to run a downloaded binary with
+        # "cannot verify that survey2gis is free of malware".
+        if system == "darwin":
+            try:
+                subprocess.run(
+                    ["xattr", "-d", "com.apple.quarantine", binary_path],
+                    capture_output=True,
+                    timeout=15,
+                )
+                # xattr fails harmlessly if the attribute isn't set; that's fine.
+                msg += " (and cleared macOS quarantine flag if present)"
+            except Exception:  # noqa: BLE001
+                pass
+
         if os.access(binary_path, os.X_OK):
             return True, msg
         return False, (
@@ -188,3 +210,91 @@ def make_binary_executable(binary_path):
         return False, (
             f"Could not set executable permissions for {binary_path}: {error}"
         )
+
+
+def test_run_binary(binary_path, timeout=15):
+    """Actually launch the binary once to see whether it starts at all.
+
+    Runs ``survey2gis --help``, which starts the program, prints usage and
+    exits without needing any input files. We don't care about the exact
+    output - what matters is whether the OS lets the binary run. This surfaces
+    the failures that a permission/size check cannot see:
+
+      * macOS Gatekeeper quarantine ("cannot verify that ... is free of
+        malware") - the process is killed by signal SIGKILL (-9)
+      * Windows missing DLLs - the process fails to start
+      * Linux missing shared libraries - non-zero exit / OSError
+
+    :returns: dict with keys: launched (bool), returncode, stdout, stderr,
+              signal, message
+    """
+    import subprocess
+    import platform as _platform
+
+    result = {
+        "launched": False,
+        "returncode": None,
+        "stdout": "",
+        "stderr": "",
+        "signal": None,
+        "message": "",
+    }
+
+    if not os.path.isfile(binary_path):
+        result["message"] = f"Binary not found: {binary_path}"
+        return result
+
+    try:
+        completed = subprocess.run(
+            [binary_path, "--help"],
+            capture_output=True,
+            timeout=timeout,
+            cwd=os.path.dirname(binary_path) or None,
+        )
+        result["launched"] = True
+        result["returncode"] = completed.returncode
+        result["stdout"] = completed.stdout.decode("utf-8", errors="replace")
+        result["stderr"] = completed.stderr.decode("utf-8", errors="replace")
+
+        # A negative return code on POSIX means the process was killed by a
+        # signal. On macOS a Gatekeeper block shows up as SIGKILL (-9).
+        if completed.returncode is not None and completed.returncode < 0:
+            sig = -completed.returncode
+            result["signal"] = sig
+            if _platform.system().lower() == "darwin" and sig == 9:
+                result["message"] = (
+                    "The binary was killed by the operating system (SIGKILL). "
+                    "On macOS this is almost always Gatekeeper quarantine: "
+                    "'cannot verify that survey2gis is free of malware'. "
+                    "Remove the quarantine flag (see the 'make executable' "
+                    "action) or allow it under System Settings > Privacy & "
+                    "Security."
+                )
+            else:
+                result["message"] = (
+                    f"The binary was terminated by signal {sig}."
+                )
+        elif completed.returncode == 0:
+            result["message"] = "Binary started and exited cleanly."
+        else:
+            # survey2gis returns non-zero for usage errors, which is still a
+            # successful launch - the program clearly ran.
+            result["message"] = (
+                f"Binary started (exit code {completed.returncode})."
+            )
+        return result
+
+    except subprocess.TimeoutExpired:
+        result["message"] = (
+            f"Binary did not respond within {timeout}s - it may be hanging "
+            "or waiting for input."
+        )
+        return result
+    except OSError as error:
+        # Typical on Windows for missing DLLs, or a corrupt/blocked binary.
+        result["message"] = (
+            f"Operating system refused to launch the binary: {error}. "
+            "On Windows this usually means a required DLL is missing; on "
+            "macOS/Linux it can mean a missing shared library or a block."
+        )
+        return result
